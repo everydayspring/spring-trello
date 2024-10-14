@@ -1,23 +1,27 @@
 package com.sparta.springtrello.config;
 
-import com.sparta.springtrello.domain.common.dto.AuthUser;
-import com.sparta.springtrello.domain.user.enums.UserRole;
-import io.jsonwebtoken.Claims;
-import io.jsonwebtoken.ExpiredJwtException;
-import io.jsonwebtoken.MalformedJwtException;
-import io.jsonwebtoken.UnsupportedJwtException;
+import java.io.IOException;
+
 import jakarta.servlet.FilterChain;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
-import java.io.IOException;
-import lombok.NonNull;
-import lombok.RequiredArgsConstructor;
-import lombok.extern.slf4j.Slf4j;
+
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.web.authentication.WebAuthenticationDetailsSource;
 import org.springframework.stereotype.Component;
 import org.springframework.web.filter.OncePerRequestFilter;
+
+import com.sparta.springtrello.domain.common.dto.AuthUser;
+import com.sparta.springtrello.domain.user.enums.UserRole;
+
+import io.jsonwebtoken.Claims;
+import io.jsonwebtoken.ExpiredJwtException;
+import io.jsonwebtoken.MalformedJwtException;
+import io.jsonwebtoken.UnsupportedJwtException;
+import lombok.NonNull;
+import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 
 @Slf4j
 @Component
@@ -30,8 +34,8 @@ public class JwtSecurityFilter extends OncePerRequestFilter {
     protected void doFilterInternal(
             HttpServletRequest httpRequest,
             @NonNull HttpServletResponse httpResponse,
-            @NonNull FilterChain chain
-    ) throws ServletException, IOException {
+            @NonNull FilterChain chain)
+            throws ServletException, IOException {
         String authorizationHeader = httpRequest.getHeader("Authorization");
 
         if (authorizationHeader != null && authorizationHeader.startsWith("Bearer ")) {
@@ -45,8 +49,10 @@ public class JwtSecurityFilter extends OncePerRequestFilter {
                 if (SecurityContextHolder.getContext().getAuthentication() == null) {
                     AuthUser authUser = new AuthUser(userId, email, userRole);
 
-                    JwtAuthenticationToken authenticationToken = new JwtAuthenticationToken(authUser);
-                    authenticationToken.setDetails(new WebAuthenticationDetailsSource().buildDetails(httpRequest));
+                    JwtAuthenticationToken authenticationToken =
+                            new JwtAuthenticationToken(authUser);
+                    authenticationToken.setDetails(
+                            new WebAuthenticationDetailsSource().buildDetails(httpRequest));
                     SecurityContextHolder.getContext().setAuthentication(authenticationToken);
                 }
             } catch (SecurityException | MalformedJwtException e) {

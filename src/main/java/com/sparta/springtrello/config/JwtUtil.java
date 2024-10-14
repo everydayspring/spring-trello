@@ -1,19 +1,23 @@
 package com.sparta.springtrello.config;
 
+import java.security.Key;
+import java.util.Base64;
+import java.util.Date;
+
+import jakarta.annotation.PostConstruct;
+
+import org.springframework.beans.factory.annotation.Value;
+import org.springframework.stereotype.Component;
+import org.springframework.util.StringUtils;
+
 import com.sparta.springtrello.domain.common.exception.ServerException;
 import com.sparta.springtrello.domain.user.enums.UserRole;
+
 import io.jsonwebtoken.Claims;
 import io.jsonwebtoken.Jwts;
 import io.jsonwebtoken.SignatureAlgorithm;
 import io.jsonwebtoken.security.Keys;
-import jakarta.annotation.PostConstruct;
-import java.security.Key;
-import java.util.Base64;
-import java.util.Date;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.beans.factory.annotation.Value;
-import org.springframework.stereotype.Component;
-import org.springframework.util.StringUtils;
 
 @Slf4j(topic = "JwtUtil")
 @Component
@@ -24,6 +28,7 @@ public class JwtUtil {
 
     @Value("${jwt.secret.key}")
     private String secretKey;
+
     private Key key;
     private final SignatureAlgorithm signatureAlgorithm = SignatureAlgorithm.HS256;
 
@@ -36,8 +41,8 @@ public class JwtUtil {
     public String createToken(Long userId, String email, UserRole userRole) {
         Date date = new Date();
 
-        return BEARER_PREFIX +
-                Jwts.builder()
+        return BEARER_PREFIX
+                + Jwts.builder()
                         .setSubject(String.valueOf(userId))
                         .claim("email", email)
                         .claim("userRole", userRole)
@@ -56,10 +61,6 @@ public class JwtUtil {
     }
 
     public Claims extractClaims(String token) {
-        return Jwts.parserBuilder()
-                .setSigningKey(key)
-                .build()
-                .parseClaimsJws(token)
-                .getBody();
+        return Jwts.parserBuilder().setSigningKey(key).build().parseClaimsJws(token).getBody();
     }
 }

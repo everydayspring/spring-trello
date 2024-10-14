@@ -1,20 +1,24 @@
 package com.sparta.springtrello.config;
 
-import com.sparta.springtrello.domain.common.exception.InvalidRequestException;
-import com.sparta.springtrello.domain.common.exception.ServerException;
-import jakarta.security.auth.message.AuthException;
 import java.util.HashMap;
 import java.util.Map;
+
+import jakarta.security.auth.message.AuthException;
+
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
 
+import com.sparta.springtrello.domain.common.exception.InvalidRequestException;
+import com.sparta.springtrello.domain.common.exception.ServerException;
+
 @RestControllerAdvice
 public class GlobalExceptionHandler {
 
     @ExceptionHandler(InvalidRequestException.class)
-    public ResponseEntity<Map<String, Object>> invalidRequestExceptionException(InvalidRequestException ex) {
+    public ResponseEntity<Map<String, Object>> invalidRequestExceptionException(
+            InvalidRequestException ex) {
         HttpStatus status = HttpStatus.BAD_REQUEST;
         return getErrorResponse(status, ex.getMessage());
     }

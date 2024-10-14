@@ -1,13 +1,13 @@
 package com.sparta.springtrello.domain.user.enums;
 
 import java.util.Arrays;
+
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;
 
 @Getter
 @RequiredArgsConstructor
 public enum UserRole {
-
     ROLE_USER(Authority.USER),
     ROLE_ADMIN(Authority.ADMIN);
 

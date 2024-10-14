@@ -15,5 +15,4 @@ public class SpringTrelloApplication {
     public static void main(String[] args) {
         SpringApplication.run(SpringTrelloApplication.class, args);
     }
-
 }
