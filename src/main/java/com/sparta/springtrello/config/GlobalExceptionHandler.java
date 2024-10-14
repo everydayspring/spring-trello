@@ -17,30 +17,26 @@ import com.sparta.springtrello.domain.common.exception.ServerException;
 public class GlobalExceptionHandler {
 
     @ExceptionHandler(InvalidRequestException.class)
-    public ResponseEntity<Map<String, Object>> invalidRequestExceptionException(
+    public ResponseEntity<ApiResponse<?>> invalidRequestExceptionException(
             InvalidRequestException ex) {
         HttpStatus status = HttpStatus.BAD_REQUEST;
         return getErrorResponse(status, ex.getMessage());
     }
 
     @ExceptionHandler(AuthException.class)
-    public ResponseEntity<Map<String, Object>> handleAuthException(AuthException ex) {
+    public ResponseEntity<ApiResponse<?>> handleAuthException(AuthException ex) {
         HttpStatus status = HttpStatus.UNAUTHORIZED;
         return getErrorResponse(status, ex.getMessage());
     }
 
     @ExceptionHandler(ServerException.class)
-    public ResponseEntity<Map<String, Object>> handleServerException(ServerException ex) {
+    public ResponseEntity<ApiResponse<?>> handleServerException(ServerException ex) {
         HttpStatus status = HttpStatus.INTERNAL_SERVER_ERROR;
         return getErrorResponse(status, ex.getMessage());
     }
 
-    public ResponseEntity<Map<String, Object>> getErrorResponse(HttpStatus status, String message) {
-        Map<String, Object> errorResponse = new HashMap<>();
-        errorResponse.put("status", status.name());
-        errorResponse.put("code", status.value());
-        errorResponse.put("message", message);
+    public ResponseEntity<ApiResponse<?>> getErrorResponse(HttpStatus status, String message) {
 
-        return new ResponseEntity<>(errorResponse, status);
+        return ResponseEntity.status(status).body(ApiResponse.error("예기치 않은 오류가 발생했습니다." + message));
     }
 }
