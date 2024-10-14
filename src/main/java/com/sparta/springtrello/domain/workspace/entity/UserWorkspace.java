@@ -1,7 +1,9 @@
 package com.sparta.springtrello.domain.workspace.entity;
 
-import com.sparta.springtrello.domain.common.entity.Timestamped;
 import jakarta.persistence.*;
+
+import com.sparta.springtrello.domain.common.entity.Timestamped;
+
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 
