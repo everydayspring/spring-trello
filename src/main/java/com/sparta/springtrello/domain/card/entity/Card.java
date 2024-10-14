@@ -1,6 +1,6 @@
 package com.sparta.springtrello.domain.card.entity;
 
-import java.time.LocalTime;
+import java.time.LocalDateTime;
 
 import jakarta.persistence.*;
 
@@ -21,11 +21,12 @@ public class Card extends Timestamped {
 
     private String name;
     private String description;
-    private LocalTime dueDate;
+    private LocalDateTime dueDate;
     private Long managerId;
     private Long listId;
 
-    public Card(String name, String description, LocalTime dueDate, Long managerId, Long listId) {
+    public Card(
+            String name, String description, LocalDateTime dueDate, Long managerId, Long listId) {
         this.name = name;
         this.description = description;
         this.dueDate = dueDate;

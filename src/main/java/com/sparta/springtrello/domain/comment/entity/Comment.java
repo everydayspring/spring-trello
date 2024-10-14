@@ -19,11 +19,13 @@ public class Comment extends Timestamped {
 
     private String emoji;
     private String content;
+    private Long cardId;
     private Long userId;
 
-    public Comment(String emoji, String content, Long userId) {
+    public Comment(String emoji, String content, Long cardId, Long userId) {
         this.emoji = emoji;
         this.content = content;
+        this.cardId = cardId;
         this.userId = userId;
     }
 }
