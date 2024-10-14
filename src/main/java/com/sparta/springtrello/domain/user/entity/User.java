@@ -1,8 +1,5 @@
 package com.sparta.springtrello.domain.user.entity;
 
-import com.sparta.springtrello.domain.common.dto.AuthUser;
-import com.sparta.springtrello.domain.common.entity.Timestamped;
-import com.sparta.springtrello.domain.user.enums.UserRole;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.EnumType;
@@ -11,6 +8,11 @@ import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
 import jakarta.persistence.Table;
+
+import com.sparta.springtrello.domain.common.dto.AuthUser;
+import com.sparta.springtrello.domain.common.entity.Timestamped;
+import com.sparta.springtrello.domain.user.enums.UserRole;
+
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 
@@ -23,11 +25,16 @@ public class User extends Timestamped {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
+
     @Column(unique = true)
     private String email;
+
     private String password;
+
     @Enumerated(EnumType.STRING)
     private UserRole userRole;
+
+    private Long workspaceId;
 
     public User(String email, String password, UserRole userRole) {
         this.email = email;
@@ -42,7 +49,9 @@ public class User extends Timestamped {
     }
 
     public static User fromAuthUser(AuthUser authUser) {
-        return new User(authUser.getId(), authUser.getEmail(),
+        return new User(
+                authUser.getId(),
+                authUser.getEmail(),
                 UserRole.of(String.valueOf(authUser.getAuthorities().stream().findFirst())));
     }
 
@@ -52,5 +61,9 @@ public class User extends Timestamped {
 
     public void updateRole(UserRole userRole) {
         this.userRole = userRole;
+    }
+
+    public void setWorkspace(Long workspaceId) {
+        this.workspaceId = workspaceId;
     }
 }

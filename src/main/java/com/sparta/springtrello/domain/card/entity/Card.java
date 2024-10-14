@@ -1,4 +1,39 @@
 package com.sparta.springtrello.domain.card.entity;
 
-public class Card {
+import java.time.LocalTime;
+
+import jakarta.persistence.*;
+
+import com.sparta.springtrello.domain.common.entity.Timestamped;
+
+import lombok.Getter;
+import lombok.NoArgsConstructor;
+
+@Getter
+@Entity
+@NoArgsConstructor
+@Table(name = "cards")
+public class Card extends Timestamped {
+
+    @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    private Long id;
+
+    private String name;
+    private String description;
+    private LocalTime dueDate;
+    private Long managerId;
+    private Long listId;
+
+    public Card(String name, String description, LocalTime dueDate, Long managerId, Long listId) {
+        this.name = name;
+        this.description = description;
+        this.dueDate = dueDate;
+        this.managerId = managerId;
+        this.listId = listId;
+    }
+
+    public void changeManager(Long managerId) {
+        this.managerId = managerId;
+    }
 }
