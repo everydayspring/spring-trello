@@ -17,10 +17,21 @@ public class Workspace extends Timestamped {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
+    private Long managerId;
     private String name;
     private String description;
 
-    public Workspace(String name, String description) {
+    public Workspace(Long managerId, String name, String description) {
+        this.managerId = managerId;
+        this.name = name;
+        this.description = description;
+    }
+
+    public void changeManagerId(Long managerId) {
+        this.managerId = managerId;
+    }
+
+    public void updateWorkspace(String name, String description) {
         this.name = name;
         this.description = description;
     }

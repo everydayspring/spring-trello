@@ -27,6 +27,11 @@ spring:
         use_sql_comments: true
         dialect: org.hibernate.dialect.MySQL8Dialect
 
+slack:
+  webhook:
+    url: ${s_url}
+  token: ${s_token}
+
 
 jwt:
-  secret.key: 7Iqk7YyM66W07YOA7L2U65Sp7YG065+9U3ByaW5n6rCV7J2Y7Yqc7YSw7LWc7JuQ67mI7J6F64uI64ukLg==
+  secret.key: ${secret_key}
