@@ -1,10 +1,19 @@
 package com.sparta.springtrello.domain.list.service;
 
+import java.util.List;
 
-import com.sparta.springtrello.domain.list.repository.ListRepository;
-import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+
+import com.querydsl.jpa.impl.JPAQueryFactory;
+import com.sparta.springtrello.domain.card.entity.QCard;
+import com.sparta.springtrello.domain.common.dto.AuthUser;
+import com.sparta.springtrello.domain.list.dto.request.ListRequestDto;
+import com.sparta.springtrello.domain.list.entity.BoardList;
+import com.sparta.springtrello.domain.list.entity.QBoardList;
+import com.sparta.springtrello.domain.list.repository.ListRepository;
+
+import lombok.RequiredArgsConstructor;
 
 @Service
 @RequiredArgsConstructor
@@ -12,4 +21,33 @@ import org.springframework.transaction.annotation.Transactional;
 public class ListService {
 
     private final ListRepository listRepository;
+    private final JPAQueryFactory queryFactory;
+
+    // 리스트 생성
+    @Transactional
+    public BoardList createList(AuthUser authUser, ListRequestDto listRequestDto) {
+        // 읽기 전용 사용자 x(수정이랑 삭제에도 넣어야함)
+        //        if (authUser.isReadOnly()) {
+        //            throw new IllegalArgumentException("읽기 전용 사용자는 리스트를 생성할 수 없습니다.");
+        //        }
+
+        // 새로운 리스트 생성
+        BoardList boardList =
+                new BoardList(
+                        listRequestDto.getName(),
+                        listRequestDto.getSequence(),
+                        listRequestDto.getBoardId());
+
+        // 리스트 저장
+        return listRepository.save(boardList);
+    }
+
+    // 리스트 조회
+
+
+    // 리스트 수정
+
+
+    // 리스트 삭제
+
 }
