@@ -20,14 +20,16 @@ public class Card extends Timestamped {
     private Long id;
 
     private String name;
+    private Long sequence;
     private String description;
     private LocalDateTime dueDate;
     private Long managerId;
     private Long listId;
 
     public Card(
-            String name, String description, LocalDateTime dueDate, Long managerId, Long listId) {
+            String name, Long sequence, String description, LocalDateTime dueDate, Long managerId, Long listId) {
         this.name = name;
+        this.sequence = sequence;
         this.description = description;
         this.dueDate = dueDate;
         this.managerId = managerId;
