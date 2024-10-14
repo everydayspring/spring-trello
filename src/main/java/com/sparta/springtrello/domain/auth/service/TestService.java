@@ -63,10 +63,10 @@ public class TestService {
         listRepository.save(new List("list3", 1L, 2L));
         listRepository.save(new List("list4", 2L, 2L));
 
-        cardRepository.save(new Card("card1", "description1", LocalDateTime.now(), 1L, 1L));
-        cardRepository.save(new Card("card2", "description2", LocalDateTime.now(), 2L, 1L));
-        cardRepository.save(new Card("card3", "description3", LocalDateTime.now(), 3L, 2L));
-        cardRepository.save(new Card("card4", "description4", LocalDateTime.now(), 4L, 2L));
+        cardRepository.save(new Card("card1", 1L, "description1", LocalDateTime.now(), 1L, 1L));
+        cardRepository.save(new Card("card2", 2L, "description2", LocalDateTime.now(), 2L, 1L));
+        cardRepository.save(new Card("card3", 1L, "description3", LocalDateTime.now(), 3L, 2L));
+        cardRepository.save(new Card("card4", 1L, "description4", LocalDateTime.now(), 4L, 2L));
 
         commentRepository.save(new Comment("emoji1", "content", 1L, 1L));
         commentRepository.save(new Comment("emoji2", "content", 2L, 1L));
