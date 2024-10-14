@@ -34,8 +34,6 @@ public class User extends Timestamped {
     @Enumerated(EnumType.STRING)
     private UserRole userRole;
 
-    private Long workspaceId;
-
     public User(String email, String password, UserRole userRole) {
         this.email = email;
         this.password = password;
@@ -61,9 +59,5 @@ public class User extends Timestamped {
 
     public void updateRole(UserRole userRole) {
         this.userRole = userRole;
-    }
-
-    public void setWorkspace(Long workspaceId) {
-        this.workspaceId = workspaceId;
     }
 }
