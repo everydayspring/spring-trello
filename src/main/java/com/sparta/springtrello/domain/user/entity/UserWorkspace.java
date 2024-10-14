@@ -1,8 +1,9 @@
-package com.sparta.springtrello.domain.workspace.entity;
+package com.sparta.springtrello.domain.user.entity;
 
 import jakarta.persistence.*;
 
 import com.sparta.springtrello.domain.common.entity.Timestamped;
+import com.sparta.springtrello.domain.user.enums.WorkspaceUserRole;
 
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -19,9 +20,15 @@ public class UserWorkspace extends Timestamped {
 
     private Long userId;
     private Long workspaceId;
+    private WorkspaceUserRole workspaceUserRole;
 
-    public UserWorkspace(Long userId, Long workspaceId) {
+    public UserWorkspace(Long userId, Long workspaceId, WorkspaceUserRole workspaceUserRole) {
         this.userId = userId;
         this.workspaceId = workspaceId;
+        this.workspaceUserRole = workspaceUserRole;
+    }
+
+    public void changeUserRole(WorkspaceUserRole newWorkspaceUserRole) {
+        this.workspaceUserRole = newWorkspaceUserRole;
     }
 }

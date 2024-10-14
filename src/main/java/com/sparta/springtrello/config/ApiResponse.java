@@ -1,6 +1,7 @@
 package com.sparta.springtrello.config;
 
 import com.fasterxml.jackson.annotation.JsonInclude;
+
 import lombok.Getter;
 
 @Getter
@@ -8,7 +9,8 @@ import lombok.Getter;
 public class ApiResponse<T> {
 
     public enum Status {
-        SUCCESS, ERROR
+        SUCCESS,
+        ERROR
     }
 
     private final Status status;
@@ -32,5 +34,4 @@ public class ApiResponse<T> {
     public static ApiResponse<?> error(String message) {
         return new ApiResponse<>(Status.ERROR, null, message);
     }
-
 }

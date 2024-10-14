@@ -1,8 +1,5 @@
 package com.sparta.springtrello.config;
 
-import java.util.HashMap;
-import java.util.Map;
-
 import jakarta.security.auth.message.AuthException;
 
 import org.springframework.http.HttpStatus;
@@ -37,6 +34,6 @@ public class GlobalExceptionHandler {
 
     public ResponseEntity<ApiResponse<?>> getErrorResponse(HttpStatus status, String message) {
 
-        return ResponseEntity.status(status).body(ApiResponse.error("예기치 않은 오류가 발생했습니다." + message));
+        return ResponseEntity.status(status).body(ApiResponse.error("오류가 발생했습니다." + message));
     }
 }
