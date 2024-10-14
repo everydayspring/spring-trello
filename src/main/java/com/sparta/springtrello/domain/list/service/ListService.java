@@ -52,6 +52,21 @@ public class ListService {
 
 
     // 리스트 수정
+    @Transactional
+    public BoardList updateList(Long listId, ListRequestDto listRequestDto, AuthUser authUser) {
+
+        // 리스트 조회
+        BoardList boardList =
+                listRepository
+                        .findById(listId)
+                        .orElseThrow(() -> new IllegalArgumentException("해당 리스트를 찾을 수 없습니다."));
+
+        // 리스트 정보 업데이트
+        boardList.setName(listRequestDto.getName());
+        boardList.setSequence(listRequestDto.getSequence());
+
+        return listRepository.save(boardList);
+    }
 
 
     // 리스트 삭제
