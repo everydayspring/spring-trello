@@ -1,4 +1,7 @@
 package com.sparta.springtrello.domain.list.repository;
 
-public class ListRepository {
-}
+import org.springframework.data.jpa.repository.JpaRepository;
+
+import com.sparta.springtrello.domain.list.entity.List;
+
+public interface ListRepository extends JpaRepository<List, Long> {}
