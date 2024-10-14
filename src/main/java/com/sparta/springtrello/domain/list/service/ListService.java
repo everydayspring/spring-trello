@@ -1,6 +1,5 @@
 package com.sparta.springtrello.domain.list.service;
 
-
 import com.sparta.springtrello.domain.list.repository.ListRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
