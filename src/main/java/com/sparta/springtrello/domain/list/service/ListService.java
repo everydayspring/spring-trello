@@ -43,6 +43,12 @@ public class ListService {
     }
 
     // 리스트 조회
+    public List<BoardList> getListsByBoardId(Long boardId, AuthUser authUser) {
+        QBoardList boardList = QBoardList.boardList;
+
+        // 보드에 속한 모든 리스트 조회
+        return queryFactory.selectFrom(boardList).where(boardList.boardId.eq(boardId)).fetch();
+    }
 
 
     // 리스트 수정
