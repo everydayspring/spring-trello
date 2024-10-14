@@ -40,6 +40,10 @@ public class CardService {
     }
 
     //카드 조회
+    public Card getCardById(Long cardId) {
+        return cardRepository.findById(cardId)
+                .orElseThrow(() -> new IllegalArgumentException("해당 카드를 찾을 수 없습니다."));
+    }
 
     //카드 수정
     @Transactional
