@@ -42,6 +42,23 @@ public class CardService {
     //카드 조회
 
     //카드 수정
+    @Transactional
+    public Card updateCard(Long cardId, AuthUser authUser, CardRequestDto cardRequestDto) {
+
+        // 카드 존재 여부 확인
+        Card card = cardRepository.findById(cardId)
+                .orElseThrow(() -> new IllegalArgumentException("해당 카드를 찾을 수 없습니다."));
+
+        // 카드 정보 수정
+        card.updateCard(
+                cardRequestDto.getName(),
+                cardRequestDto.getDescription(),
+                cardRequestDto.getDueDate(),
+                cardRequestDto.getManagerId()
+        );
+
+        return cardRepository.save(card);
+    }
 
     //카드 삭제
 }
