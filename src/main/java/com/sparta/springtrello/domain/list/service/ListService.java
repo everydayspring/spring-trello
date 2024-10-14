@@ -70,5 +70,17 @@ public class ListService {
 
 
     // 리스트 삭제
+    public void deleteList(Long listId, AuthUser authUser) {
+        // 리스트 조회
+        BoardList boardList =
+                listRepository
+                        .findById(listId)
+                        .orElseThrow(() -> new IllegalArgumentException("해당 리스트를 찾을 수 없습니다."));
+
+        QCard card = QCard.card;
+        queryFactory.delete(card).where(card.listId.eq(listId)).execute();
+
+        listRepository.delete(boardList);
+    }
 
 }
