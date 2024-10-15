@@ -54,7 +54,9 @@ public class ListController {
     @DeleteMapping("/{id}")
     public ResponseEntity<Void> deleteList(
             @PathVariable Long id, @AuthenticationPrincipal AuthUser authUser) {
+
         listService.deleteList(id, authUser);
+
         return ResponseEntity.noContent().build();
     }
 }
