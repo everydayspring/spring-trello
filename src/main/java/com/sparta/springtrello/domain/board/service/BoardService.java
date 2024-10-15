@@ -17,7 +17,6 @@ import com.sparta.springtrello.domain.board.repository.BoardRepository;
 import com.sparta.springtrello.domain.common.dto.AuthUser;
 import com.sparta.springtrello.domain.common.exception.InvalidRequestException;
 import com.sparta.springtrello.domain.user.entity.User;
-import com.sparta.springtrello.domain.user.entity.UserWorkspace;
 import com.sparta.springtrello.domain.user.enums.UserRole;
 import com.sparta.springtrello.domain.user.repository.UserRepository;
 import com.sparta.springtrello.domain.user.repository.UserWorkspaceRepository;
@@ -113,15 +112,14 @@ public class BoardService {
 
     public BoardDetailResponseDto getBoard(Long id, AuthUser authUser) {
 
-        User user =
-                userRepository
-                        .findById(authUser.getId())
-                        .orElseThrow(() -> new IllegalArgumentException("해당 사용자를 찾을 수 없습니다."));
-
         Board board =
                 boardRepository
                         .findById(id)
                         .orElseThrow(() -> new IllegalArgumentException("해당 보드를 찾을 수 없습니다."));
+
+        if (userWorkspaceRepository.findByUserIdAndWorkspaceId(authUser.getId(), board.getWorkspaceId()).isEmpty()) {
+            throw new InvalidRequestException("워크스페이스 멤버가 아닙니다");
+        }
 
         return new BoardDetailResponseDto(
                 board.getId(), board.getName(), board.getBackground(), board.getWorkspaceId());
