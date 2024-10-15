@@ -9,7 +9,7 @@ import com.querydsl.jpa.impl.JPAQueryFactory;
 import com.sparta.springtrello.domain.board.entitiy.QBoard;
 import com.sparta.springtrello.domain.card.entity.QCard;
 import com.sparta.springtrello.domain.comment.entity.QComment;
-import com.sparta.springtrello.domain.list.entity.QList;
+import com.sparta.springtrello.domain.list.entity.QBoardList;
 import com.sparta.springtrello.domain.user.entity.QUserWorkspace;
 import com.sparta.springtrello.domain.workspace.entity.QWorkspace;
 
@@ -25,7 +25,7 @@ public class WorkspaceQueryRepositoryImpl implements WorkspaceQueryRepository {
     @Transactional
     public void deleteWorkspaceWithAllData(Long workspaceId) {
         QBoard board = QBoard.board;
-        QList list = QList.list;
+        QBoardList list = QBoardList.boardList;
         QCard card = QCard.card;
         QComment comment = QComment.comment;
         QUserWorkspace userWorkspace = QUserWorkspace.userWorkspace;
@@ -58,6 +58,7 @@ public class WorkspaceQueryRepositoryImpl implements WorkspaceQueryRepository {
 
                 if (!cardIds.isEmpty()) {
                     // Step 4: 카드와 연결된 댓글 삭제
+
                     queryFactory.delete(comment).where(comment.cardId.in(cardIds)).execute();
 
                     // Step 5: 카드 삭제

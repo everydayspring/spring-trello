@@ -74,7 +74,6 @@ public class TestService {
         cardRepository.save(new Card("card3", 3L, "description3", LocalDateTime.now(), 3L, 2L));
         cardRepository.save(new Card("card4", 4L, "description4", LocalDateTime.now(), 4L, 2L));
 
-
         commentRepository.save(new Comment("emoji1", "content", 1L, 1L));
         commentRepository.save(new Comment("emoji2", "content", 2L, 1L));
         commentRepository.save(new Comment("emoji3", "content", 3L, 1L));
