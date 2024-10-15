@@ -10,7 +10,6 @@ import org.springframework.web.bind.annotation.*;
 
 import com.sparta.springtrello.config.ApiResponse;
 import com.sparta.springtrello.domain.common.dto.AuthUser;
-import com.sparta.springtrello.domain.workspace.dto.AddUserDto;
 import com.sparta.springtrello.domain.workspace.dto.CreateWorkspaceDto;
 import com.sparta.springtrello.domain.workspace.dto.UpdateWorkspaceDto;
 import com.sparta.springtrello.domain.workspace.entity.Workspace;
@@ -45,25 +44,6 @@ public class WorkspaceController {
                         request.getDescription());
 
         return ResponseEntity.ok(ApiResponse.success(new CreateWorkspaceDto.Response(workspace)));
-    }
-
-    /**
-     * 멤버 추가
-     *
-     * @param authUser
-     * @param id
-     * @param request
-     * @return null
-     */
-    @PostMapping("/{id}/members")
-    public ResponseEntity<ApiResponse<?>> addMember(
-            @AuthenticationPrincipal AuthUser authUser,
-            @PathVariable Long id,
-            @RequestBody @Valid AddUserDto.Request request) {
-
-        workspaceService.addMember(authUser, id, request.getEmail(), request.getRole());
-
-        return ResponseEntity.ok(ApiResponse.successWithNoContent());
     }
 
     /**
