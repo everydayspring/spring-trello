@@ -17,7 +17,6 @@ import com.sparta.springtrello.domain.list.entity.QBoardList;
 import com.sparta.springtrello.domain.list.repository.ListRepository;
 import com.sparta.springtrello.domain.user.entity.UserWorkspace;
 import com.sparta.springtrello.domain.user.enums.WorkspaceUserRole;
-import com.sparta.springtrello.domain.user.repository.UserRepository;
 import com.sparta.springtrello.domain.user.repository.UserWorkspaceRepository;
 
 import lombok.RequiredArgsConstructor;
@@ -29,7 +28,6 @@ public class ListService {
 
     private final ListRepository listRepository;
     private final BoardRepository boardRepository;
-    private final UserRepository userRepository;
     private final UserWorkspaceRepository userWorkspaceRepository;
     private final JPAQueryFactory queryFactory;
 
