@@ -78,6 +78,7 @@ public class BoardService {
 
         // 저장된 보드 정보를 DTO로 반환
         return new BoardSaveResponseDto(
+                savedBoard.getId(),
                 savedBoard.getWorkspaceId(),
                 savedBoard.getName(),
                 savedBoard.getBackground(),
@@ -88,10 +89,14 @@ public class BoardService {
     public List<BoardDetailResponseDto> getBoards(AuthUser authUser, Long id) {
 
         // workspace 멤버인지 조회
-        UserWorkspace userWorkspace =
-                userWorkspaceRepository
-                        .findByUserIdAndWorkspaceId(authUser.getId(), id)
-                        .orElseThrow(() -> new InvalidRequestException("워크스페이스 멤버가 아닙니다"));
+        if (userWorkspaceRepository.findByUserIdAndWorkspaceId(authUser.getId(), id).isEmpty()) {
+            throw new InvalidRequestException("워크스페이스 멤버가 아닙니다");
+        }
+
+        // workspace 검증
+        if (workspaceRepository.findById(id).isEmpty()) {
+            throw new InvalidRequestException("workspace not found");
+        }
 
         List<Board> boardList = boardRepository.findByWorkspaceId(id);
 
@@ -99,6 +104,7 @@ public class BoardService {
                 .map(
                         board ->
                                 new BoardDetailResponseDto(
+                                        board.getId(),
                                         board.getName(),
                                         board.getBackground(),
                                         board.getWorkspaceId()))
@@ -118,7 +124,7 @@ public class BoardService {
                         .orElseThrow(() -> new IllegalArgumentException("해당 보드를 찾을 수 없습니다."));
 
         return new BoardDetailResponseDto(
-                board.getName(), board.getBackground(), board.getWorkspaceId());
+                board.getId(), board.getName(), board.getBackground(), board.getWorkspaceId());
     }
 
     @Transactional
