@@ -12,7 +12,7 @@ import com.sparta.springtrello.domain.card.entity.Card;
 import com.sparta.springtrello.domain.card.repository.CardRepository;
 import com.sparta.springtrello.domain.comment.entity.Comment;
 import com.sparta.springtrello.domain.comment.repository.CommentRepository;
-import com.sparta.springtrello.domain.list.entity.List;
+import com.sparta.springtrello.domain.list.entity.BoardList;
 import com.sparta.springtrello.domain.list.repository.ListRepository;
 import com.sparta.springtrello.domain.user.entity.User;
 import com.sparta.springtrello.domain.user.entity.UserWorkspace;
@@ -64,15 +64,16 @@ public class TestService {
         boardRepository.save(new Board("board2", "description2", 2L));
         boardRepository.save(new Board("board3", "description3", 3L));
 
-        listRepository.save(new List("list1", 1L, 1L));
-        listRepository.save(new List("list2", 2L, 1L));
-        listRepository.save(new List("list3", 1L, 2L));
-        listRepository.save(new List("list4", 2L, 2L));
+        listRepository.save(new BoardList("list1", 1L, 1L));
+        listRepository.save(new BoardList("list2", 2L, 1L));
+        listRepository.save(new BoardList("list3", 1L, 2L));
+        listRepository.save(new BoardList("list4", 2L, 2L));
 
         cardRepository.save(new Card("card1", 1L, "description1", LocalDateTime.now(), 1L, 1L));
         cardRepository.save(new Card("card2", 2L, "description2", LocalDateTime.now(), 2L, 1L));
-        cardRepository.save(new Card("card3", 1L, "description3", LocalDateTime.now(), 3L, 2L));
-        cardRepository.save(new Card("card4", 1L, "description4", LocalDateTime.now(), 4L, 2L));
+        cardRepository.save(new Card("card3", 3L, "description3", LocalDateTime.now(), 3L, 2L));
+        cardRepository.save(new Card("card4", 4L, "description4", LocalDateTime.now(), 4L, 2L));
+
 
         commentRepository.save(new Comment("emoji1", "content", 1L, 1L));
         commentRepository.save(new Comment("emoji2", "content", 2L, 1L));
