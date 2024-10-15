@@ -112,15 +112,14 @@ public class BoardService {
 
     public BoardDetailResponseDto getBoard(Long id, AuthUser authUser) {
 
-        User user =
-                userRepository
-                        .findById(authUser.getId())
-                        .orElseThrow(() -> new IllegalArgumentException("해당 사용자를 찾을 수 없습니다."));
-
         Board board =
                 boardRepository
                         .findById(id)
                         .orElseThrow(() -> new IllegalArgumentException("해당 보드를 찾을 수 없습니다."));
+
+        if (userWorkspaceRepository.findByUserIdAndWorkspaceId(authUser.getId(), board.getWorkspaceId()).isEmpty()) {
+            throw new InvalidRequestException("워크스페이스 멤버가 아닙니다");
+        }
 
         return new BoardDetailResponseDto(
                 board.getId(), board.getName(), board.getBackground(), board.getWorkspaceId());
