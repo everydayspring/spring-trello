@@ -25,6 +25,10 @@ public class CommentService {
     public CommentResponse saveComment(AuthUser authUser, CommentRequest request) {
         User user = User.fromAuthUser(authUser);
 
+        //        if (user.getWorkspaceUserRole() == WorkspaceUserRole.READ_ONLY) {
+        //            throw new IllegalArgumentException("읽기 전용 역할을 가진 사용자는 댓글을 생성할 수 없습니다.");
+        //        }
+
         Comment comment =
                 new Comment(
                         request.getEmoji(),

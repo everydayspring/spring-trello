@@ -15,7 +15,6 @@ import com.sparta.springtrello.domain.user.service.UserAdminService;
 import lombok.RequiredArgsConstructor;
 
 @RestController
-@RequestMapping("/api")
 @RequiredArgsConstructor
 public class UserAdminController {
 
