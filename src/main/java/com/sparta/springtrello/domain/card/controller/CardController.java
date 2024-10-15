@@ -1,6 +1,5 @@
 package com.sparta.springtrello.domain.card.controller;
 
-
 import java.util.List;
 
 import org.springframework.http.ResponseEntity;
