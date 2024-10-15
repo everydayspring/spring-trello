@@ -1,7 +1,7 @@
 package com.sparta.springtrello.domain.board.controller;
 
-import com.sparta.springtrello.domain.board.dto.request.GetBoardsRequestDto;
 import jakarta.validation.Valid;
+
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.*;
@@ -9,6 +9,7 @@ import org.springframework.web.bind.annotation.*;
 import com.sparta.springtrello.config.ApiResponse;
 import com.sparta.springtrello.domain.board.dto.request.BoardSaveRequestDto;
 import com.sparta.springtrello.domain.board.dto.request.BoardUpdateRequestDto;
+import com.sparta.springtrello.domain.board.dto.request.GetBoardsRequestDto;
 import com.sparta.springtrello.domain.board.service.BoardService;
 import com.sparta.springtrello.domain.common.dto.AuthUser;
 
@@ -32,9 +33,9 @@ public class BoardController {
     @GetMapping
     public ResponseEntity<ApiResponse<?>> getBoards(
             @AuthenticationPrincipal AuthUser authUser,
-            @RequestBody @Valid GetBoardsRequestDto request
-            ) {
-        return ResponseEntity.ok(ApiResponse.success(boardService.getBoards(authUser, request.getWorkspaceId())));
+            @RequestBody @Valid GetBoardsRequestDto request) {
+        return ResponseEntity.ok(
+                ApiResponse.success(boardService.getBoards(authUser, request.getWorkspaceId())));
     }
 
     @GetMapping("/{id}")

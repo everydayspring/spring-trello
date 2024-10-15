@@ -1,7 +1,7 @@
 package com.sparta.springtrello.domain.board.service;
 
-import java.util.ArrayList;
 import java.util.List;
+import java.util.stream.Collectors;
 
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -17,8 +17,10 @@ import com.sparta.springtrello.domain.board.repository.BoardRepository;
 import com.sparta.springtrello.domain.common.dto.AuthUser;
 import com.sparta.springtrello.domain.common.exception.InvalidRequestException;
 import com.sparta.springtrello.domain.user.entity.User;
+import com.sparta.springtrello.domain.user.entity.UserWorkspace;
 import com.sparta.springtrello.domain.user.enums.UserRole;
 import com.sparta.springtrello.domain.user.repository.UserRepository;
+import com.sparta.springtrello.domain.user.repository.UserWorkspaceRepository;
 import com.sparta.springtrello.domain.workspace.entity.Workspace;
 import com.sparta.springtrello.domain.workspace.repository.WorkspaceRepository;
 
@@ -32,6 +34,7 @@ public class BoardService {
     private final BoardRepository boardRepository;
     private final WorkspaceRepository workspaceRepository;
     private final UserRepository userRepository;
+    private final UserWorkspaceRepository userWorkspaceRepository;
 
     @Transactional
     public BoardSaveResponseDto saveBoards(
@@ -82,20 +85,24 @@ public class BoardService {
                 savedBoard.getModifiedAt());
     }
 
-    public List<BoardDetailResponseDto> getBoards() {
+    public List<BoardDetailResponseDto> getBoards(AuthUser authUser, Long id) {
 
-        List<Board> boardList = boardRepository.findAll();
-        List<BoardDetailResponseDto> dtoList = new ArrayList<>();
+        // workspace 멤버인지 조회
+        UserWorkspace userWorkspace =
+                userWorkspaceRepository
+                        .findByUserIdAndWorkspaceId(authUser.getId(), id)
+                        .orElseThrow(() -> new InvalidRequestException("워크스페이스 멤버가 아닙니다"));
 
-        // 각 보드의 정보를 DTO로 변환하여 리스트에 추가
-        for (Board board : boardList) {
-            BoardDetailResponseDto dto =
-                    new BoardDetailResponseDto(
-                            board.getName(), board.getBackground(), board.getWorkspaceId());
-            dtoList.add(dto);
-        }
+        List<Board> boardList = boardRepository.findByWorkspaceId(id);
 
-        return dtoList;
+        return boardList.stream()
+                .map(
+                        board ->
+                                new BoardDetailResponseDto(
+                                        board.getName(),
+                                        board.getBackground(),
+                                        board.getWorkspaceId()))
+                .collect(Collectors.toList());
     }
 
     public BoardDetailResponseDto getBoard(Long id, AuthUser authUser) {
