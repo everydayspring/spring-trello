@@ -15,8 +15,11 @@ import com.sparta.springtrello.domain.comment.repository.CommentRepository;
 import com.sparta.springtrello.domain.list.entity.List;
 import com.sparta.springtrello.domain.list.repository.ListRepository;
 import com.sparta.springtrello.domain.user.entity.User;
+import com.sparta.springtrello.domain.user.entity.UserWorkspace;
 import com.sparta.springtrello.domain.user.enums.UserRole;
+import com.sparta.springtrello.domain.user.enums.WorkspaceUserRole;
 import com.sparta.springtrello.domain.user.repository.UserRepository;
+import com.sparta.springtrello.domain.user.repository.UserWorkspaceRepository;
 import com.sparta.springtrello.domain.workspace.entity.Workspace;
 import com.sparta.springtrello.domain.workspace.repository.WorkspaceRepository;
 
@@ -34,6 +37,7 @@ public class TestService {
     private final ListRepository listRepository;
     private final CardRepository cardRepository;
     private final CommentRepository commentRepository;
+    private final UserWorkspaceRepository userWorkspaceRepository;
 
     @Transactional
     public void test() {
@@ -50,9 +54,11 @@ public class TestService {
         userRepository.save(
                 new User("user5@mail.com", passwordEncoder.encode("abc123?!"), UserRole.ROLE_USER));
 
-        workspaceRepository.save(new Workspace("workspace1", "description1"));
-        workspaceRepository.save(new Workspace("workspace2", "description2"));
-        workspaceRepository.save(new Workspace("workspace3", "description3"));
+        workspaceRepository.save(new Workspace(1L, "workspace1", "description1"));
+        workspaceRepository.save(new Workspace(2L, "workspace2", "description2"));
+        workspaceRepository.save(new Workspace(3L, "workspace3", "description3"));
+        workspaceRepository.save(new Workspace(4L, "workspace4", "description4"));
+        workspaceRepository.save(new Workspace(5L, "workspace5", "description5"));
 
         boardRepository.save(new Board("board1", "description1", 1L));
         boardRepository.save(new Board("board2", "description2", 2L));
@@ -72,5 +78,11 @@ public class TestService {
         commentRepository.save(new Comment("emoji2", "content", 2L, 1L));
         commentRepository.save(new Comment("emoji3", "content", 3L, 1L));
         commentRepository.save(new Comment("emoji4", "content", 4L, 1L));
+
+        userWorkspaceRepository.save(new UserWorkspace(1L, 1L, WorkspaceUserRole.WORKSPACE));
+        userWorkspaceRepository.save(new UserWorkspace(1L, 2L, WorkspaceUserRole.WORKSPACE));
+        userWorkspaceRepository.save(new UserWorkspace(1L, 3L, WorkspaceUserRole.WORKSPACE));
+        userWorkspaceRepository.save(new UserWorkspace(1L, 4L, WorkspaceUserRole.WORKSPACE));
+        userWorkspaceRepository.save(new UserWorkspace(1L, 5L, WorkspaceUserRole.WORKSPACE));
     }
 }
