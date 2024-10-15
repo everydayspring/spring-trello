@@ -54,4 +54,5 @@ public class ListController {
         listService.deleteList(id, authUser);
         return ResponseEntity.noContent().build();
     }
+
 }

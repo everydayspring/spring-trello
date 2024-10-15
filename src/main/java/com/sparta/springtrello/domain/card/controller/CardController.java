@@ -53,4 +53,5 @@ public class CardController {
         cardService.deleteCard(id, authUser);
         return ResponseEntity.noContent().build();
     }
+
 }

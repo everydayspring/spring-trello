@@ -27,7 +27,12 @@ public class Card extends Timestamped {
     private Long listId;
 
     public Card(
-            String name, Long sequence, String description, LocalDateTime dueDate, Long managerId, Long listId) {
+            String name,
+            Long sequence,
+            String description,
+            LocalDateTime dueDate,
+            Long managerId,
+            Long listId) {
         this.name = name;
         this.sequence = sequence;
         this.description = description;
@@ -38,5 +43,20 @@ public class Card extends Timestamped {
 
     public void changeManager(Long managerId) {
         this.managerId = managerId;
+    }
+
+    public void updateCard(String name, String description, LocalDateTime dueDate, Long managerId) {
+        this.name = name;
+        this.description = description;
+        this.dueDate = dueDate;
+        this.managerId = managerId;
+    }
+
+    public void setListId(Long listId) {
+        this.listId = listId;
+    }
+
+    public void setSequence(Long sequence) {
+        this.sequence = sequence;
     }
 }

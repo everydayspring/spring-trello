@@ -50,7 +50,6 @@ public class ListService {
         return queryFactory.selectFrom(boardList).where(boardList.boardId.eq(boardId)).fetch();
     }
 
-
     // 리스트 수정
     @Transactional
     public BoardList updateList(Long listId, ListRequestDto listRequestDto, AuthUser authUser) {
@@ -68,8 +67,8 @@ public class ListService {
         return listRepository.save(boardList);
     }
 
-
     // 리스트 삭제
+    @Transactional
     public void deleteList(Long listId, AuthUser authUser) {
         // 리스트 조회
         BoardList boardList =
@@ -82,5 +81,4 @@ public class ListService {
 
         listRepository.delete(boardList);
     }
-
 }

@@ -1,9 +1,11 @@
 package com.sparta.springtrello.domain.board.service;
 
-import com.sparta.springtrello.domain.board.repository.BoardRepository;
-import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+
+import com.sparta.springtrello.domain.board.repository.BoardRepository;
+
+import lombok.RequiredArgsConstructor;
 
 @Service
 @RequiredArgsConstructor

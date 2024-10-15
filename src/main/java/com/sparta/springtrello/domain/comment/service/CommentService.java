@@ -1,9 +1,11 @@
 package com.sparta.springtrello.domain.comment.service;
 
-import com.sparta.springtrello.domain.comment.repository.CommentRepository;
-import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+
+import com.sparta.springtrello.domain.comment.repository.CommentRepository;
+
+import lombok.RequiredArgsConstructor;
 
 @Service
 @RequiredArgsConstructor
