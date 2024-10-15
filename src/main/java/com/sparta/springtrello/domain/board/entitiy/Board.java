@@ -26,4 +26,9 @@ public class Board extends Timestamped {
         this.background = background;
         this.workspaceId = workspaceId;
     }
+
+    public void update(String name, String background) {
+        this.name = name;
+        this.background = background;
+    }
 }

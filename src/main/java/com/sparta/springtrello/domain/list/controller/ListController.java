@@ -9,6 +9,7 @@ import org.springframework.web.bind.annotation.*;
 import com.sparta.springtrello.domain.common.dto.AuthUser;
 import com.sparta.springtrello.domain.list.dto.request.ListRequestDto;
 import com.sparta.springtrello.domain.list.entity.BoardList;
+
 import com.sparta.springtrello.domain.list.service.ListService;
 
 import lombok.RequiredArgsConstructor;

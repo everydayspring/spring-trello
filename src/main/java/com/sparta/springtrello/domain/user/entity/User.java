@@ -50,7 +50,7 @@ public class User extends Timestamped {
         return new User(
                 authUser.getId(),
                 authUser.getEmail(),
-                UserRole.of(String.valueOf(authUser.getAuthorities().stream().findFirst())));
+                UserRole.of(String.valueOf(authUser.getAuthorities().stream().findFirst().get())));
     }
 
     public void changePassword(String password) {

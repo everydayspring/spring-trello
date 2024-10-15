@@ -1,6 +1,10 @@
 package com.sparta.springtrello.domain.comment.entity;
 
-import jakarta.persistence.*;
+import jakarta.persistence.Entity;
+import jakarta.persistence.GeneratedValue;
+import jakarta.persistence.GenerationType;
+import jakarta.persistence.Id;
+import jakarta.persistence.Table;
 
 import com.sparta.springtrello.domain.common.entity.Timestamped;
 
@@ -27,5 +31,10 @@ public class Comment extends Timestamped {
         this.content = content;
         this.cardId = cardId;
         this.userId = userId;
+    }
+
+    public void update(String emoji, String content) {
+        this.emoji = emoji;
+        this.content = content;
     }
 }
