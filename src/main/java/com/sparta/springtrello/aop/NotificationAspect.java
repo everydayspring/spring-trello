@@ -42,7 +42,7 @@ public class NotificationAspect {
         // 알림 메시지 생성
         String message =
                 String.format(
-                        "addMember 성공: authUser=%s, workspaceId=%s, email=%s, role=%s",
+                        "Workspace Add User Event \n\n - AuthUser = %s \n - Workspace ID = %s \n - Add User Email = %s \n - Role = %s",
                         authUser, workspaceId, email, role);
 
         // Slack 알림 전송
@@ -61,9 +61,10 @@ public class NotificationAspect {
         // 알림 메시지 생성
         String message =
                 String.format(
-                        "댓글 작성 성공: authUser=%s, cardId=%s, content=%s",
+                        "New Comment Event \n\n - AuthUser = %s \n - Card ID = %s \n - Emoji = %s \n - Content = %s",
                         authUser,
                         ((CommentRequest) commentRequest).getCardId(),
+                        ((CommentRequest) commentRequest).getEmoji(),
                         ((CommentRequest) commentRequest).getContent());
 
         // Slack 알림 전송
