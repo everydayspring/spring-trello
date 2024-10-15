@@ -1,6 +1,5 @@
 package com.sparta.springtrello.domain.user.entity;
 
-import com.sparta.springtrello.domain.common.entity.Timestamped;
 import jakarta.persistence.*;
 
 import com.sparta.springtrello.domain.common.entity.Timestamped;

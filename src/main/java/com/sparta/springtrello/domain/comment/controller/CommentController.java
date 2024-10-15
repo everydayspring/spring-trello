@@ -27,8 +27,7 @@ public class CommentController {
     @PostMapping("/comments")
     public ResponseEntity<CommentResponse> saveComment(
             @AuthenticationPrincipal AuthUser authUser,
-            @Valid @RequestBody CommentRequest commentRequest)
-    {
+            @Valid @RequestBody CommentRequest commentRequest) {
         return ResponseEntity.ok(commentService.saveComment(authUser, commentRequest));
     }
 
@@ -36,16 +35,12 @@ public class CommentController {
     public ResponseEntity<CommentResponse> updateComment(
             @PathVariable Long id,
             @AuthenticationPrincipal AuthUser authUser,
-            @Valid @RequestBody CommentRequest commentRequest)
-    {
+            @Valid @RequestBody CommentRequest commentRequest) {
         return ResponseEntity.ok(commentService.updateComment(id, authUser, commentRequest));
     }
 
     @DeleteMapping("/comments/{id}")
-    public void deleteComment(
-            @PathVariable Long id,
-            @AuthenticationPrincipal AuthUser authUser)
-    {
+    public void deleteComment(@PathVariable Long id, @AuthenticationPrincipal AuthUser authUser) {
         commentService.deleteComment(id, authUser);
     }
 }

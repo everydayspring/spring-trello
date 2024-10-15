@@ -1,6 +1,7 @@
 package com.sparta.springtrello.domain.comment.service;
 
 import jakarta.persistence.EntityNotFoundException;
+
 import org.springframework.security.access.AccessDeniedException;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -24,11 +25,12 @@ public class CommentService {
     public CommentResponse saveComment(AuthUser authUser, CommentRequest request) {
         User user = User.fromAuthUser(authUser);
 
-        Comment comment = new Comment(
-                request.getEmoji(),
-                request.getContent(),
-                request.getCardId(),
-                user.getId());
+        Comment comment =
+                new Comment(
+                        request.getEmoji(),
+                        request.getContent(),
+                        request.getCardId(),
+                        user.getId());
 
         Comment savedComment = commentRepository.save(comment);
 
@@ -37,8 +39,10 @@ public class CommentService {
 
     public CommentResponse updateComment(Long id, AuthUser authUser, CommentRequest request) {
         User user = User.fromAuthUser(authUser);
-        Comment comment = commentRepository.findById(id).orElseThrow(() ->
-                new EntityNotFoundException("댓글을 찾을 수 없습니다."));
+        Comment comment =
+                commentRepository
+                        .findById(id)
+                        .orElseThrow(() -> new EntityNotFoundException("댓글을 찾을 수 없습니다."));
 
         if (!comment.getUserId().equals(user.getId())) {
             throw new AccessDeniedException("댓글을 수정할 권한이 없습니다.");
@@ -53,8 +57,10 @@ public class CommentService {
 
     public void deleteComment(Long id, AuthUser authUser) {
         User user = User.fromAuthUser(authUser);
-        Comment comment = commentRepository.findById(id).orElseThrow(() ->
-                new EntityNotFoundException("댓글을 찾을 수 없습니다."));
+        Comment comment =
+                commentRepository
+                        .findById(id)
+                        .orElseThrow(() -> new EntityNotFoundException("댓글을 찾을 수 없습니다."));
 
         if (!comment.getUserId().equals(user.getId())) {
             throw new AccessDeniedException("댓글을 삭제할 권한이 없습니다.");

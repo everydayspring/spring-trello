@@ -27,7 +27,6 @@ public class CommentResponse {
                 comment.getEmoji(),
                 comment.getContent(),
                 comment.getCreatedAt(),
-                comment.getModifiedAt()
-        );
+                comment.getModifiedAt());
     }
 }
