@@ -1,16 +1,14 @@
 package com.sparta.springtrello.domain.board.controller;
 
-import java.util.List;
-
+import com.sparta.springtrello.domain.board.dto.request.GetBoardsRequestDto;
+import jakarta.validation.Valid;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.*;
 
+import com.sparta.springtrello.config.ApiResponse;
 import com.sparta.springtrello.domain.board.dto.request.BoardSaveRequestDto;
 import com.sparta.springtrello.domain.board.dto.request.BoardUpdateRequestDto;
-import com.sparta.springtrello.domain.board.dto.response.BoardDetailResponseDto;
-import com.sparta.springtrello.domain.board.dto.response.BoardSaveResponseDto;
-import com.sparta.springtrello.domain.board.dto.response.BoardUpdateResponseDto;
 import com.sparta.springtrello.domain.board.service.BoardService;
 import com.sparta.springtrello.domain.common.dto.AuthUser;
 
@@ -24,35 +22,40 @@ public class BoardController {
     private final BoardService boardService;
 
     @PostMapping
-    public ResponseEntity<BoardSaveResponseDto> saveBoard(
+    public ResponseEntity<ApiResponse<?>> saveBoard(
             @RequestBody BoardSaveRequestDto boardSaveRequestDto,
             @AuthenticationPrincipal AuthUser authUser) {
-        return ResponseEntity.ok(boardService.saveBoards(boardSaveRequestDto, authUser));
+        return ResponseEntity.ok(
+                ApiResponse.success(boardService.saveBoards(boardSaveRequestDto, authUser)));
     }
 
     @GetMapping
-    public ResponseEntity<List<BoardDetailResponseDto>> getBoards() {
-        return ResponseEntity.ok(boardService.getBoards());
+    public ResponseEntity<ApiResponse<?>> getBoards(
+            @AuthenticationPrincipal AuthUser authUser,
+            @RequestBody @Valid GetBoardsRequestDto request
+            ) {
+        return ResponseEntity.ok(ApiResponse.success(boardService.getBoards(authUser, request.getWorkspaceId())));
     }
 
     @GetMapping("/{id}")
-    public ResponseEntity<BoardDetailResponseDto> getBoard(
+    public ResponseEntity<ApiResponse<?>> getBoard(
             @PathVariable Long id, @AuthenticationPrincipal AuthUser authUser) {
-        return ResponseEntity.ok(boardService.getBoard(id, authUser));
+        return ResponseEntity.ok(ApiResponse.success(boardService.getBoard(id, authUser)));
     }
 
     @PutMapping("/{id}")
-    public ResponseEntity<BoardUpdateResponseDto> updateBoard(
+    public ResponseEntity<ApiResponse<?>> updateBoard(
             @PathVariable Long id,
             @RequestBody BoardUpdateRequestDto boardUpdateRequestDto,
             @AuthenticationPrincipal AuthUser authUser) {
-        return ResponseEntity.ok(boardService.updateBoard(id, boardUpdateRequestDto, authUser));
+        return ResponseEntity.ok(
+                ApiResponse.success(boardService.updateBoard(id, boardUpdateRequestDto, authUser)));
     }
 
     @DeleteMapping("/{id}")
-    public ResponseEntity<Void> deleteBoard(
+    public ResponseEntity<ApiResponse<?>> deleteBoard(
             @PathVariable Long id, @AuthenticationPrincipal AuthUser authUser) {
         boardService.deleteBoard(id, authUser);
-        return ResponseEntity.ok().build();
+        return ResponseEntity.ok(ApiResponse.successWithNoContent());
     }
 }
