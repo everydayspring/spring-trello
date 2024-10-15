@@ -72,7 +72,7 @@ public class ListService {
     }
 
     // 리스트 조회
-    public List<BoardList> getListsByBoardId(Long boardId, AuthUser authUser) {
+    public List<BoardList> getListsByBoardId(Long boardId) {
         QBoardList boardList = QBoardList.boardList;
 
         // 보드에 속한 모든 리스트 조회

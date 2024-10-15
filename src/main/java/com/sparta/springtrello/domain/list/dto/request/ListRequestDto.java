@@ -9,4 +9,8 @@ public class ListRequestDto {
     private String name;
     private Long sequence;
     private Long boardId;
+
+    public void setBoardId(Long boardId) {
+        this.boardId = boardId;
+    }
 }
