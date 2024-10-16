@@ -24,14 +24,12 @@ public class Comment extends Timestamped {
     private String emoji;
     private String content;
     private Long cardId;
-    private Long workspaceId;
     private Long userId;
 
-    public Comment(String emoji, String content, Long cardId, Long workspaceId, Long userId) {
+    public Comment(String emoji, String content, Long cardId, Long userId) {
         this.emoji = emoji;
         this.content = content;
         this.cardId = cardId;
-        this.workspaceId = workspaceId;
         this.userId = userId;
     }
 
