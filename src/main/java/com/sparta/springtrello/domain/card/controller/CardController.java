@@ -25,14 +25,18 @@ public class CardController {
     public ResponseEntity<Card> createCard(
             @RequestBody CardRequestDto cardRequestDto,
             @AuthenticationPrincipal AuthUser authUser) {
-        Card createdCard = cardService.createCard(authUser, cardRequestDto);
+        Card newCard = cardService.createCard(cardRequestDto, authUser);
+        Card createdCard =
+                cardService.addCard(cardRequestDto.getListId(), cardRequestDto, authUser);
+
         return ResponseEntity.ok(createdCard);
     }
 
     // 조회
     @GetMapping("/{listId}")
-    public ResponseEntity<List<Card>> getCardsByListId(@PathVariable Long listId) {
-        List<Card> cards = cardService.findAllByListId(listId);
+    public ResponseEntity<List<Card>> getCardsByListId(
+            @PathVariable Long listId, @AuthenticationPrincipal AuthUser authUser) {
+        List<Card> cards = cardService.findAllByListId(listId, authUser);
         return ResponseEntity.ok(cards);
     }
 
