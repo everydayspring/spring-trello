@@ -39,7 +39,6 @@ public class ListService {
                 boardRepository
                         .findById(listRequestDto.getBoardId())
                         .orElseThrow(() -> new IllegalArgumentException("해당 보드를 찾을 수 없습니다."));
-        Long workspaceId = board.getWorkspaceId();
         UserWorkspace userWorkspace =
                 userWorkspaceRepository
                         .findByUserIdAndWorkspaceId(authUser.getId(), board.getWorkspaceId())
@@ -50,11 +49,13 @@ public class ListService {
             throw new AccessDeniedException("읽기 전용 권한을 가진 유저는 리스트를 생성할 수 없습니다.");
         }
 
+        Long currentListCount = listRepository.countByBoardId(board.getId());
+
         // 새로운 리스트 생성
         BoardList boardList =
                 new BoardList(
                         listRequestDto.getName(),
-                        listRequestDto.getSequence(),
+                        currentListCount + 1,
                         listRequestDto.getBoardId());
 
         // 리스트 저장
@@ -62,22 +63,11 @@ public class ListService {
     }
 
     // 리스트 조회
-    public List<BoardList> getListsByBoardId(Long boardId) {
-        QBoardList boardList = QBoardList.boardList;
-
-        // 보드에 속한 모든 리스트 조회
-        return queryFactory.selectFrom(boardList).where(boardList.boardId.eq(boardId)).fetch();
-    }
-
-    // 리스트 수정
-    @Transactional
-    public BoardList updateList(Long listId, ListRequestDto listRequestDto, AuthUser authUser) {
-
+    public List<BoardList> getListsByBoardId(Long boardId, AuthUser authUser) {
         Board board =
                 boardRepository
-                        .findById(listRequestDto.getBoardId())
+                        .findById(boardId)
                         .orElseThrow(() -> new IllegalArgumentException("해당 보드를 찾을 수 없습니다."));
-        Long workspaceId = board.getWorkspaceId();
         UserWorkspace userWorkspace =
                 userWorkspaceRepository
                         .findByUserIdAndWorkspaceId(authUser.getId(), board.getWorkspaceId())
@@ -88,15 +78,36 @@ public class ListService {
             throw new AccessDeniedException("읽기 전용 권한을 가진 유저는 리스트를 수정할 수 없습니다.");
         }
 
-        // 리스트 조회
+        QBoardList boardList = QBoardList.boardList;
+        // 보드에 속한 모든 리스트 조회
+        return queryFactory.selectFrom(boardList).where(boardList.boardId.eq(boardId)).fetch();
+    }
+
+    // 리스트 수정
+    @Transactional
+    public BoardList updateList(Long listId, ListRequestDto listRequestDto, AuthUser authUser) {
         BoardList boardList =
                 listRepository
                         .findById(listId)
                         .orElseThrow(() -> new IllegalArgumentException("해당 리스트를 찾을 수 없습니다."));
 
-        // 리스트 정보 업데이트
+        Board board =
+                boardRepository
+                        .findById(boardList.getBoardId())
+                        .orElseThrow(() -> new IllegalArgumentException("해당 보드를 찾을 수 없습니다."));
+
+        UserWorkspace userWorkspace =
+                userWorkspaceRepository
+                        .findByUserIdAndWorkspaceId(authUser.getId(), board.getWorkspaceId())
+                        .orElseThrow(
+                                () -> new IllegalArgumentException("해당 워크스페이스에 대한 접근 권한이 없습니다."));
+
+        if (userWorkspace.getWorkspaceUserRole() == WorkspaceUserRole.READ_ONLY) {
+            throw new AccessDeniedException("읽기 전용 권한을 가진 유저는 리스트를 수정할 수 없습니다.");
+        }
+
+        // 리스트 정보 업데이트(보드 아이디는 변경 불가)
         boardList.setName(listRequestDto.getName());
-        boardList.setSequence(listRequestDto.getSequence());
 
         return listRepository.save(boardList);
     }
