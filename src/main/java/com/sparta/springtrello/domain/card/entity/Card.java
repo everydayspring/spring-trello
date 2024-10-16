@@ -8,9 +8,11 @@ import com.sparta.springtrello.domain.common.entity.Timestamped;
 
 import lombok.Getter;
 import lombok.NoArgsConstructor;
+import lombok.Setter;
 
 @Getter
 @Entity
+@Setter
 @NoArgsConstructor
 @Table(name = "cards")
 public class Card extends Timestamped {
@@ -50,13 +52,5 @@ public class Card extends Timestamped {
         this.description = description;
         this.dueDate = dueDate;
         this.managerId = managerId;
-    }
-
-    public void setListId(Long listId) {
-        this.listId = listId;
-    }
-
-    public void setSequence(Long sequence) {
-        this.sequence = sequence;
     }
 }

@@ -39,7 +39,6 @@ public class ListService {
                 boardRepository
                         .findById(listRequestDto.getBoardId())
                         .orElseThrow(() -> new IllegalArgumentException("해당 보드를 찾을 수 없습니다."));
-        Long workspaceId = board.getWorkspaceId();
         UserWorkspace userWorkspace =
                 userWorkspaceRepository
                         .findByUserIdAndWorkspaceId(authUser.getId(), board.getWorkspaceId())
@@ -68,7 +67,6 @@ public class ListService {
                 boardRepository
                         .findById(listRequestDto.getBoardId())
                         .orElseThrow(() -> new IllegalArgumentException("해당 보드를 찾을 수 없습니다."));
-        Long workspaceId = board.getWorkspaceId();
         UserWorkspace userWorkspace =
                 userWorkspaceRepository
                         .findByUserIdAndWorkspaceId(authUser.getId(), board.getWorkspaceId())
@@ -88,11 +86,16 @@ public class ListService {
     // 리스트 수정
     @Transactional
     public BoardList updateList(Long listId, ListRequestDto listRequestDto, AuthUser authUser) {
+        BoardList boardList =
+                listRepository
+                        .findById(listId)
+                        .orElseThrow(() -> new IllegalArgumentException("해당 리스트를 찾을 수 없습니다."));
+
         Board board =
                 boardRepository
-                        .findById(listRequestDto.getBoardId())
+                        .findById(boardList.getBoardId())
                         .orElseThrow(() -> new IllegalArgumentException("해당 보드를 찾을 수 없습니다."));
-        Long workspaceId = board.getWorkspaceId();
+
         UserWorkspace userWorkspace =
                 userWorkspaceRepository
                         .findByUserIdAndWorkspaceId(authUser.getId(), board.getWorkspaceId())
@@ -103,13 +106,7 @@ public class ListService {
             throw new AccessDeniedException("읽기 전용 권한을 가진 유저는 리스트를 수정할 수 없습니다.");
         }
 
-        // 리스트 조회
-        BoardList boardList =
-                listRepository
-                        .findById(listId)
-                        .orElseThrow(() -> new IllegalArgumentException("해당 리스트를 찾을 수 없습니다."));
-
-        // 리스트 정보 업데이트
+        // 리스트 정보 업데이트(보드 아이디는 변경 불가)
         boardList.setName(listRequestDto.getName());
         boardList.setSequence(listRequestDto.getSequence());
 

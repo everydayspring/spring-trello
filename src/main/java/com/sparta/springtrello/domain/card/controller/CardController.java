@@ -25,7 +25,10 @@ public class CardController {
     public ResponseEntity<Card> createCard(
             @RequestBody CardRequestDto cardRequestDto,
             @AuthenticationPrincipal AuthUser authUser) {
-        Card createdCard = cardService.createCard(authUser, cardRequestDto);
+        Card newCard = cardService.createCard(cardRequestDto, authUser);
+        Card createdCard =
+                cardService.addCard(cardRequestDto.getListId(), cardRequestDto, authUser);
+
         return ResponseEntity.ok(createdCard);
     }
 
