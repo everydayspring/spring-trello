@@ -8,11 +8,9 @@ import com.sparta.springtrello.domain.common.entity.Timestamped;
 
 import lombok.Getter;
 import lombok.NoArgsConstructor;
-import lombok.Setter;
 
 @Getter
 @Entity
-@Setter
 @NoArgsConstructor
 @Table(name = "cards")
 public class Card extends Timestamped {
@@ -68,5 +66,9 @@ public class Card extends Timestamped {
     public void addFile(String fileName, String fileUrl) {
         this.fileName = fileName;
         this.fileUrl = fileUrl;
+    }
+
+    public void changeSequence(Long sequence) {
+        this.sequence = sequence;
     }
 }

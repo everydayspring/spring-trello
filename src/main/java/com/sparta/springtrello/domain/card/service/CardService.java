@@ -245,7 +245,7 @@ public class CardService {
         List<Card> cards = cardRepository.findCardsReorder(card.getListId(), card.getSequence());
 
         for (Card targetCard : cards) {
-            targetCard.setSequence(targetCard.getSequence() - 1);
+            targetCard.changeSequence(targetCard.getSequence() - 1);
         }
     }
 }
