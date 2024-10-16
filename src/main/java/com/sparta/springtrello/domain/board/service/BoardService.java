@@ -175,7 +175,8 @@ public class BoardService {
                 userWorkspaceRepository
                         .findByUserIdAndWorkspaceId(
                                 user.getId(), boardUpdateRequestDto.getWorkspaceId())
-                        .orElseThrow(() -> new IllegalArgumentException("해당 워크스페이스에 소속되어 있지 않습니다."));
+                        .orElseThrow(
+                                () -> new IllegalArgumentException("해당 워크스페이스에 소속되어 있지 않습니다."));
 
         if (userWorkspace.getWorkspaceUserRole() == WorkspaceUserRole.READ_ONLY) {
             throw new AuthException("해당 워크스페이스를 수정할 권한이 없습니다.");
@@ -212,8 +213,7 @@ public class BoardService {
         UserWorkspace userWorkspace =
                 userWorkspaceRepository
                         .findByUserIdAndWorkspaceId(user.getId(), board.getWorkspaceId())
-                        .orElseThrow(
-                                () -> new AuthException("해당 워크스페이스에 소속되어 있지 않습니다."));
+                        .orElseThrow(() -> new AuthException("해당 워크스페이스에 소속되어 있지 않습니다."));
 
         if (userWorkspace.getWorkspaceUserRole() == WorkspaceUserRole.READ_ONLY) {
             throw new AuthException("해당 워크스페이스를 수정할 권한이 없습니다.");
