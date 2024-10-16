@@ -12,6 +12,7 @@ import org.springframework.web.multipart.MultipartFile;
 
 import com.sparta.springtrello.config.ApiResponse;
 import com.sparta.springtrello.domain.card.dto.CreateCardDto;
+import com.sparta.springtrello.domain.card.dto.GetCardDto;
 import com.sparta.springtrello.domain.card.dto.GetCardsDto;
 import com.sparta.springtrello.domain.card.entity.Card;
 import com.sparta.springtrello.domain.card.service.CardService;
@@ -39,17 +40,28 @@ public class CardController {
         return ResponseEntity.ok(ApiResponse.success(new CreateCardDto.Response(card)));
     }
 
-    // 조회
+    // 다건 조회
     @GetMapping
     public ResponseEntity<ApiResponse<?>> getCards(
             @Valid @RequestBody GetCardsDto.Request request,
             @AuthenticationPrincipal AuthUser authUser) {
+
         List<Card> cards = cardService.getCards(request.getListId(), authUser);
 
         List<GetCardsDto.Response> cardResponses =
                 cards.stream().map(GetCardsDto.Response::new).toList();
 
         return ResponseEntity.ok(ApiResponse.success(cardResponses));
+    }
+
+    // 단건 조회
+    @GetMapping("/{id}")
+    public ResponseEntity<ApiResponse<?>> getCard(
+            @PathVariable Long id, @AuthenticationPrincipal AuthUser authUser) {
+
+        GetCardDto.Response response = cardService.getCard(id, authUser);
+
+        return ResponseEntity.ok(ApiResponse.success(response));
     }
 
     // 수정

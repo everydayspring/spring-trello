@@ -3,7 +3,6 @@ package com.sparta.springtrello.domain.card.service;
 import java.io.IOException;
 import java.util.List;
 
-import org.springframework.security.access.AccessDeniedException;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.multipart.MultipartFile;
@@ -11,10 +10,13 @@ import org.springframework.web.multipart.MultipartFile;
 import com.sparta.springtrello.domain.board.entitiy.Board;
 import com.sparta.springtrello.domain.board.repository.BoardRepository;
 import com.sparta.springtrello.domain.card.dto.CreateCardDto;
+import com.sparta.springtrello.domain.card.dto.GetCardDto;
 import com.sparta.springtrello.domain.card.entity.Card;
 import com.sparta.springtrello.domain.card.entity.CardLog;
 import com.sparta.springtrello.domain.card.repository.CardLogRepository;
 import com.sparta.springtrello.domain.card.repository.CardRepository;
+import com.sparta.springtrello.domain.comment.entity.Comment;
+import com.sparta.springtrello.domain.comment.repository.CommentRepository;
 import com.sparta.springtrello.domain.common.dto.AuthUser;
 import com.sparta.springtrello.domain.common.exception.InvalidRequestException;
 import com.sparta.springtrello.domain.common.service.FileUploadService;
@@ -38,6 +40,7 @@ public class CardService {
     private final BoardRepository boardRepository;
     private final UserWorkspaceRepository userWorkspaceRepository;
     private final CardLogRepository cardLogRepository;
+    private final CommentRepository commentRepository;
 
     private final FileUploadService fileUploadService;
 
@@ -104,7 +107,7 @@ public class CardService {
         return card;
     }
 
-    // 카드 조회
+    // 카드 디건 조회
     public List<Card> getCards(Long listId, AuthUser authUser) {
 
         BoardList boardList =
@@ -173,8 +176,7 @@ public class CardService {
             UserWorkspace newWorkspace =
                     userWorkspaceRepository
                             .findByUserIdAndWorkspaceId(authUser.getId(), newBoard.getWorkspaceId())
-                            .orElseThrow(
-                                    () -> new InvalidRequestException("워크스페이스에 대한 권한이 없습니다."));
+                            .orElseThrow(() -> new InvalidRequestException("워크스페이스에 대한 권한이 없습니다."));
 
             if (newWorkspace.getWorkspaceUserRole() == WorkspaceUserRole.READ_ONLY) {
                 throw new InvalidRequestException("READ ONLY 유저는 카드를 수정할 수 없습니다.");
@@ -254,5 +256,34 @@ public class CardService {
         for (Card targetCard : cards) {
             targetCard.changeSequence(targetCard.getSequence() - 1);
         }
+    }
+
+    public GetCardDto.Response getCard(Long id, AuthUser authUser) {
+        Card card =
+                cardRepository
+                        .findById(id)
+                        .orElseThrow(() -> new InvalidRequestException("Card not found"));
+
+        BoardList boardList =
+                listRepository
+                        .findById(card.getListId())
+                        .orElseThrow(() -> new InvalidRequestException("List not found"));
+
+        Board board =
+                boardRepository
+                        .findById(boardList.getBoardId())
+                        .orElseThrow(() -> new InvalidRequestException("Board not found"));
+
+        if (userWorkspaceRepository
+                .findByUserIdAndWorkspaceId(authUser.getId(), board.getWorkspaceId())
+                .isEmpty()) {
+            throw new InvalidRequestException("워크스페이스에 대한 권한이 없습니다.");
+        }
+
+        List<CardLog> cardLogs = cardLogRepository.findByCardId(id);
+
+        List<Comment> comments = commentRepository.findByCardId(id);
+
+        return new GetCardDto.Response(card, cardLogs, comments);
     }
 }
