@@ -28,29 +28,40 @@ public class Card extends Timestamped {
     private Long managerId;
     private Long listId;
 
+    private String fileName;
+    private String fileUrl;
+
     public Card(
             String name,
             Long sequence,
             String description,
             LocalDateTime dueDate,
             Long managerId,
-            Long listId) {
+            Long listId,
+            String fileName,
+            String fileUrl) {
         this.name = name;
         this.sequence = sequence;
         this.description = description;
         this.dueDate = dueDate;
         this.managerId = managerId;
         this.listId = listId;
+        this.fileName = fileName;
+        this.fileUrl = fileUrl;
     }
 
-    public void changeManager(Long managerId) {
-        this.managerId = managerId;
-    }
-
-    public void updateCard(String name, String description, LocalDateTime dueDate, Long managerId) {
+    public void updateCard(
+            String name,
+            String description,
+            LocalDateTime dueDate,
+            Long managerId,
+            String fileName,
+            String fileUrl) {
         this.name = name;
         this.description = description;
         this.dueDate = dueDate;
         this.managerId = managerId;
+        this.fileName = fileName;
+        this.fileUrl = fileUrl;
     }
 }
