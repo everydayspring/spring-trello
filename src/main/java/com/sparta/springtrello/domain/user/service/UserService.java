@@ -4,7 +4,9 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import com.sparta.springtrello.domain.common.dto.AuthUser;
 import com.sparta.springtrello.domain.common.exception.InvalidRequestException;
+import com.sparta.springtrello.domain.user.dto.request.DeleteUserRequest;
 import com.sparta.springtrello.domain.user.dto.request.UserChangePasswordRequest;
 import com.sparta.springtrello.domain.user.dto.response.UserResponse;
 import com.sparta.springtrello.domain.user.entity.User;
@@ -48,6 +50,28 @@ public class UserService {
         }
 
         user.changePassword(passwordEncoder.encode(userChangePasswordRequest.getNewPassword()));
+    }
+
+    @Transactional
+    public void deleteUser(AuthUser authUser, Long id, DeleteUserRequest deleteUserRequest) {
+        User user =
+                userRepository
+                        .findByEmail(authUser.getEmail())
+                        .orElseThrow(() -> new IllegalArgumentException("유저를 찾을 수 없습니다."));
+
+        if (!user.getId().equals(id)) {
+            throw new IllegalArgumentException("삭제 권한이 없습니다.");
+        }
+
+        if (user.isDeleted()) {
+            throw new IllegalArgumentException("이미 탈퇴한 유저입니다.");
+        }
+
+        if (!passwordEncoder.matches(deleteUserRequest.getPassword(), user.getPassword())) {
+            throw new IllegalArgumentException("비밀번호가 일치하지 않습니다.");
+        }
+
+        user.changeIsDeleted();
     }
 
     private static void validateNewPassword(UserChangePasswordRequest userChangePasswordRequest) {

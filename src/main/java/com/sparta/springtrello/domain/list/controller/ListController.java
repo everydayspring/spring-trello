@@ -8,6 +8,7 @@ import org.springframework.web.bind.annotation.*;
 
 import com.sparta.springtrello.domain.common.dto.AuthUser;
 import com.sparta.springtrello.domain.list.dto.request.ListRequestDto;
+import com.sparta.springtrello.domain.list.dto.request.ListSwapRequestDto;
 import com.sparta.springtrello.domain.list.entity.BoardList;
 import com.sparta.springtrello.domain.list.service.ListService;
 
@@ -31,11 +32,9 @@ public class ListController {
 
     // 조회
     @GetMapping
-    public ResponseEntity<?> getLists(@RequestBody ListRequestDto listRequestDto) {
-
-        Long boardId = listRequestDto.getBoardId();
-        // 이 boardId를 사용해 서비스 호출
-        List<BoardList> boardLists = listService.getListsByBoardId(boardId);
+    public ResponseEntity<?> getLists(
+            @RequestParam Long boardId, @AuthenticationPrincipal AuthUser authUser) {
+        List<BoardList> boardLists = listService.getListsByBoardId(boardId, authUser);
 
         return ResponseEntity.ok(boardLists);
     }
@@ -54,9 +53,17 @@ public class ListController {
     @DeleteMapping("/{id}")
     public ResponseEntity<Void> deleteList(
             @PathVariable Long id, @AuthenticationPrincipal AuthUser authUser) {
-
         listService.deleteList(id, authUser);
-
         return ResponseEntity.noContent().build();
+    }
+
+    @PutMapping
+    public ResponseEntity<Void> swapList(
+            @RequestBody ListSwapRequestDto listSwapRequestDto,
+            @AuthenticationPrincipal AuthUser authUser) {
+
+        listService.swapList(
+                listSwapRequestDto.getList1(), listSwapRequestDto.getList2(), authUser);
+        return ResponseEntity.ok().build();
     }
 }
