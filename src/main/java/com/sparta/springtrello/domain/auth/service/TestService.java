@@ -1,14 +1,11 @@
 package com.sparta.springtrello.domain.auth.service;
 
-import java.time.LocalDateTime;
-
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import com.sparta.springtrello.domain.board.entitiy.Board;
 import com.sparta.springtrello.domain.board.repository.BoardRepository;
-import com.sparta.springtrello.domain.card.entity.Card;
 import com.sparta.springtrello.domain.card.repository.CardRepository;
 import com.sparta.springtrello.domain.comment.entity.Comment;
 import com.sparta.springtrello.domain.comment.repository.CommentRepository;
@@ -69,10 +66,14 @@ public class TestService {
         listRepository.save(new BoardList("list3", 1L, 2L));
         listRepository.save(new BoardList("list4", 2L, 2L));
 
-        cardRepository.save(new Card("card1", 1L, "description1", LocalDateTime.now(), 1L, 1L));
-        cardRepository.save(new Card("card2", 2L, "description2", LocalDateTime.now(), 2L, 1L));
-        cardRepository.save(new Card("card3", 3L, "description3", LocalDateTime.now(), 3L, 2L));
-        cardRepository.save(new Card("card4", 4L, "description4", LocalDateTime.now(), 4L, 2L));
+        //        cardRepository.save(new Card("card1", 1L, "description1", LocalDateTime.now(), 1L,
+        // 1L));
+        //        cardRepository.save(new Card("card2", 2L, "description2", LocalDateTime.now(), 2L,
+        // 1L));
+        //        cardRepository.save(new Card("card3", 3L, "description3", LocalDateTime.now(), 3L,
+        // 2L));
+        //        cardRepository.save(new Card("card4", 4L, "description4", LocalDateTime.now(), 4L,
+        // 2L));
 
         commentRepository.save(new Comment("emoji1", "content", 1L, 1L));
         commentRepository.save(new Comment("emoji2", "content", 2L, 1L));

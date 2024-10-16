@@ -1,10 +1,12 @@
 package com.sparta.springtrello.domain.card.controller;
 
+import java.io.IOException;
 import java.util.List;
 
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.multipart.MultipartFile;
 
 import com.sparta.springtrello.domain.card.dto.CardRequestDto;
 import com.sparta.springtrello.domain.card.entity.Card;
@@ -23,9 +25,12 @@ public class CardController {
     // 생성
     @PostMapping
     public ResponseEntity<Card> createCard(
-            @RequestBody CardRequestDto cardRequestDto,
-            @AuthenticationPrincipal AuthUser authUser) {
-        Card createdCard = cardService.createCard(authUser, cardRequestDto);
+            @RequestPart("data") CardRequestDto cardRequestDto,
+            @RequestPart("file") MultipartFile file,
+            @AuthenticationPrincipal AuthUser authUser)
+            throws IOException {
+
+        Card createdCard = cardService.createCard(authUser, cardRequestDto, file);
         return ResponseEntity.ok(createdCard);
     }
 
@@ -40,9 +45,11 @@ public class CardController {
     @PutMapping("/{id}")
     public ResponseEntity<Card> updateCard(
             @PathVariable Long id,
-            @RequestBody CardRequestDto cardRequestDto,
-            @AuthenticationPrincipal AuthUser authUser) {
-        Card updatedCard = cardService.updateCard(id, authUser, cardRequestDto);
+            @ModelAttribute CardRequestDto cardRequestDto, // @ModelAttribute 사용
+            @RequestParam("file") MultipartFile file, // 파일 받기
+            @AuthenticationPrincipal AuthUser authUser)
+            throws IOException {
+        Card updatedCard = cardService.updateCard(id, authUser, cardRequestDto, file); // 파일 전달
         return ResponseEntity.ok(updatedCard);
     }
 

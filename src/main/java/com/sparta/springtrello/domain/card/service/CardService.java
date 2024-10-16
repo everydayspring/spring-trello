@@ -1,10 +1,12 @@
 package com.sparta.springtrello.domain.card.service;
 
+import java.io.IOException;
 import java.util.List;
 
 import org.springframework.security.access.AccessDeniedException;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import org.springframework.web.multipart.MultipartFile;
 
 import com.sparta.springtrello.domain.board.entitiy.Board;
 import com.sparta.springtrello.domain.board.repository.BoardRepository;
@@ -16,6 +18,7 @@ import com.sparta.springtrello.domain.list.entity.BoardList;
 import com.sparta.springtrello.domain.list.repository.ListRepository;
 import com.sparta.springtrello.domain.user.entity.UserWorkspace;
 import com.sparta.springtrello.domain.user.enums.WorkspaceUserRole;
+import com.sparta.springtrello.domain.user.repository.UserRepository;
 import com.sparta.springtrello.domain.user.repository.UserWorkspaceRepository;
 
 import lombok.RequiredArgsConstructor;
@@ -30,9 +33,13 @@ public class CardService {
     private final BoardRepository boardRepository;
     private final UserWorkspaceRepository userWorkspaceRepository;
 
+    private final FileUploadService fileUploadService;
+    private final UserRepository userRepository;
+
     // 카드 생성
     @Transactional
-    public Card createCard(AuthUser authUser, CardRequestDto cardRequestDto) {
+    public Card createCard(AuthUser authUser, CardRequestDto cardRequestDto, MultipartFile file)
+            throws IOException {
         // 리스트 존재 여부 확인
         BoardList boardList =
                 listRepository
@@ -55,6 +62,11 @@ public class CardService {
             throw new AccessDeniedException("읽기 전용 권한을 가진 유저는 카드를 생성할 수 없습니다.");
         }
 
+        String fileUrl = null;
+        if (file != null && !file.isEmpty()) {
+            fileUrl = fileUploadService.uploadFile(file); // 파일 업로드 후 URL 반환
+        }
+
         // 카드 생성
         Card card =
                 new Card(
@@ -63,7 +75,9 @@ public class CardService {
                         cardRequestDto.getDescription(),
                         cardRequestDto.getDueDate(),
                         cardRequestDto.getManagerId(),
-                        cardRequestDto.getListId());
+                        cardRequestDto.getListId(),
+                        file.getOriginalFilename(),
+                        fileUrl);
 
         return cardRepository.save(card);
     }
@@ -81,7 +95,9 @@ public class CardService {
 
     // 카드 수정
     @Transactional
-    public Card updateCard(Long cardId, AuthUser authUser, CardRequestDto cardRequestDto) {
+    public Card updateCard(
+            Long cardId, AuthUser authUser, CardRequestDto cardRequestDto, MultipartFile file)
+            throws IOException {
 
         Card card =
                 cardRepository
@@ -108,12 +124,19 @@ public class CardService {
             throw new AccessDeniedException("읽기 전용 권한을 가진 유저는 카드를 생성할 수 없습니다.");
         }
 
+        String fileUrl = card.getFileUrl();
+        if (file != null && !file.isEmpty()) {
+            fileUrl = fileUploadService.uploadFile(file);
+        }
+
         // 카드 정보 수정
         card.updateCard(
                 cardRequestDto.getName(),
                 cardRequestDto.getDescription(),
                 cardRequestDto.getDueDate(),
-                cardRequestDto.getManagerId());
+                cardRequestDto.getManagerId(),
+                file.getOriginalFilename(),
+                fileUrl);
 
         card.setListId(cardRequestDto.getListId());
         card.setSequence(cardRequestDto.getSequence());
