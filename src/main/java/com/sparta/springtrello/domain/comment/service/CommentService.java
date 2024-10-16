@@ -67,11 +67,11 @@ public class CommentService {
     }
 
     private void validateInputs(Long workspaceId, Long cardId) {
-        checkWorkspaceId(workspaceId);
-        checkCardId(cardId);
+        validateWorkspaceId(workspaceId);
+        validateCardId(cardId);
     }
 
-    private void checkWorkspaceId(Long workspaceId) {
+    private void validateWorkspaceId(Long workspaceId) {
         if (workspaceId == null) {
             throw new NoSuchElementException("워크스페이스 아이디는 필수입니다.");
         }
@@ -80,7 +80,7 @@ public class CommentService {
         }
     }
 
-    private void checkCardId(Long cardId) {
+    private void validateCardId(Long cardId) {
         if (cardId == null) {
             throw new NoSuchElementException("카드 아이디는 필수입니다.");
         }
