@@ -37,7 +37,7 @@ public class UserController {
         userService.changePassword(authUser.getId(), userChangePasswordRequest);
     }
 
-    @DeleteMapping("/delete/{id}")
+    @DeleteMapping("/users/{id}")
     public void deleteUser(
             @AuthenticationPrincipal AuthUser authUser,
             @PathVariable Long id,
