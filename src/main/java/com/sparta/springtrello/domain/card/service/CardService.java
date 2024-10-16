@@ -12,9 +12,12 @@ import com.sparta.springtrello.domain.board.entitiy.Board;
 import com.sparta.springtrello.domain.board.repository.BoardRepository;
 import com.sparta.springtrello.domain.card.dto.CreateCardDto;
 import com.sparta.springtrello.domain.card.entity.Card;
+import com.sparta.springtrello.domain.card.entity.CardLog;
+import com.sparta.springtrello.domain.card.repository.CardLogRepository;
 import com.sparta.springtrello.domain.card.repository.CardRepository;
 import com.sparta.springtrello.domain.common.dto.AuthUser;
 import com.sparta.springtrello.domain.common.exception.InvalidRequestException;
+import com.sparta.springtrello.domain.common.service.FileUploadService;
 import com.sparta.springtrello.domain.list.entity.BoardList;
 import com.sparta.springtrello.domain.list.repository.ListRepository;
 import com.sparta.springtrello.domain.user.entity.UserWorkspace;
@@ -34,6 +37,7 @@ public class CardService {
     private final UserRepository userRepository;
     private final BoardRepository boardRepository;
     private final UserWorkspaceRepository userWorkspaceRepository;
+    private final CardLogRepository cardLogRepository;
 
     private final FileUploadService fileUploadService;
 
@@ -95,6 +99,7 @@ public class CardService {
         }
 
         cardRepository.save(card);
+        cardLogRepository.save(new CardLog(card));
 
         return card;
     }
@@ -205,6 +210,8 @@ public class CardService {
 
             card.addFile(file.getOriginalFilename(), fileUrl);
         }
+
+        cardLogRepository.save(new CardLog(card));
 
         return card;
     }

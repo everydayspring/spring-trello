@@ -1,4 +1,4 @@
-package com.sparta.springtrello.domain.card.service;
+package com.sparta.springtrello.domain.common.service;
 
 import java.io.IOException;
 import java.util.UUID;

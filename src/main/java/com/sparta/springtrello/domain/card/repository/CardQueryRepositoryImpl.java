@@ -7,6 +7,7 @@ import org.springframework.stereotype.Repository;
 import com.querydsl.jpa.impl.JPAQueryFactory;
 import com.sparta.springtrello.domain.card.entity.Card;
 import com.sparta.springtrello.domain.card.entity.QCard;
+import com.sparta.springtrello.domain.card.entity.QCardLog;
 import com.sparta.springtrello.domain.comment.entity.QComment;
 
 import lombok.RequiredArgsConstructor;
@@ -34,9 +35,12 @@ public class CardQueryRepositoryImpl implements CardQueryRepository {
     @Override
     public void deleteCard(Long cardId) {
         QComment comment = QComment.comment;
+        QCardLog cardLog = QCardLog.cardLog;
         QCard card = QCard.card;
 
         queryFactory.delete(comment).where(comment.cardId.eq(cardId)).execute();
+
+        queryFactory.delete(cardLog).where(cardLog.cardId.eq(cardId)).execute();
 
         queryFactory.delete(card).where(card.id.eq(cardId)).execute();
     }
