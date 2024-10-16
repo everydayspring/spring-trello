@@ -6,6 +6,7 @@ import lombok.Getter;
 public class CommentRequest {
 
     private Long cardId;
+    private Long workspaceId;
     private String emoji;
     private String content;
 }
