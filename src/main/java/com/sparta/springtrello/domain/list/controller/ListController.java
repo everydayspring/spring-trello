@@ -8,6 +8,7 @@ import org.springframework.web.bind.annotation.*;
 
 import com.sparta.springtrello.domain.common.dto.AuthUser;
 import com.sparta.springtrello.domain.list.dto.request.ListRequestDto;
+import com.sparta.springtrello.domain.list.dto.request.ListSwapRequestDto;
 import com.sparta.springtrello.domain.list.entity.BoardList;
 import com.sparta.springtrello.domain.list.service.ListService;
 
@@ -54,5 +55,15 @@ public class ListController {
             @PathVariable Long id, @AuthenticationPrincipal AuthUser authUser) {
         listService.deleteList(id, authUser);
         return ResponseEntity.noContent().build();
+    }
+
+    @PutMapping
+    public ResponseEntity<Void> swapList(
+            @RequestBody ListSwapRequestDto listSwapRequestDto,
+            @AuthenticationPrincipal AuthUser authUser) {
+
+        listService.swapList(
+                listSwapRequestDto.getList1(), listSwapRequestDto.getList2(), authUser);
+        return ResponseEntity.ok().build();
     }
 }
