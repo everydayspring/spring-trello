@@ -9,15 +9,19 @@ import org.springframework.transaction.annotation.Transactional;
 import com.sparta.springtrello.domain.auth.exception.AuthException;
 import com.sparta.springtrello.domain.board.dto.request.BoardSaveRequestDto;
 import com.sparta.springtrello.domain.board.dto.request.BoardUpdateRequestDto;
-import com.sparta.springtrello.domain.board.dto.response.BoardDetailResponseDto;
-import com.sparta.springtrello.domain.board.dto.response.BoardSaveResponseDto;
-import com.sparta.springtrello.domain.board.dto.response.BoardUpdateResponseDto;
+import com.sparta.springtrello.domain.board.dto.response.*;
 import com.sparta.springtrello.domain.board.entitiy.Board;
 import com.sparta.springtrello.domain.board.repository.BoardRepository;
+import com.sparta.springtrello.domain.card.entity.Card;
+import com.sparta.springtrello.domain.card.repository.CardRepository;
 import com.sparta.springtrello.domain.common.dto.AuthUser;
 import com.sparta.springtrello.domain.common.exception.InvalidRequestException;
+import com.sparta.springtrello.domain.list.entity.BoardList;
+import com.sparta.springtrello.domain.list.repository.ListRepository;
 import com.sparta.springtrello.domain.user.entity.User;
+import com.sparta.springtrello.domain.user.entity.UserWorkspace;
 import com.sparta.springtrello.domain.user.enums.UserRole;
+import com.sparta.springtrello.domain.user.enums.WorkspaceUserRole;
 import com.sparta.springtrello.domain.user.repository.UserRepository;
 import com.sparta.springtrello.domain.user.repository.UserWorkspaceRepository;
 import com.sparta.springtrello.domain.workspace.entity.Workspace;
@@ -34,6 +38,8 @@ public class BoardService {
     private final WorkspaceRepository workspaceRepository;
     private final UserRepository userRepository;
     private final UserWorkspaceRepository userWorkspaceRepository;
+    private final ListRepository listRepository;
+    private final CardRepository cardRepository;
 
     @Transactional
     public BoardSaveResponseDto saveBoards(
@@ -87,14 +93,12 @@ public class BoardService {
 
     public List<BoardDetailResponseDto> getBoards(AuthUser authUser, Long id) {
 
-        // workspace 멤버인지 조회
         if (userWorkspaceRepository.findByUserIdAndWorkspaceId(authUser.getId(), id).isEmpty()) {
             throw new InvalidRequestException("워크스페이스 멤버가 아닙니다");
         }
 
-        // workspace 검증
         if (workspaceRepository.findById(id).isEmpty()) {
-            throw new InvalidRequestException("workspace not found");
+            throw new InvalidRequestException("워크스페이스를 찾을 수 없습니다.");
         }
 
         List<Board> boardList = boardRepository.findByWorkspaceId(id);
@@ -110,12 +114,11 @@ public class BoardService {
                 .collect(Collectors.toList());
     }
 
-    public BoardDetailResponseDto getBoard(Long id, AuthUser authUser) {
-
+    public BoardDetailCardListResponseDto getBoard(Long id, AuthUser authUser) {
         Board board =
                 boardRepository
                         .findById(id)
-                        .orElseThrow(() -> new IllegalArgumentException("해당 보드를 찾을 수 없습니다."));
+                        .orElseThrow(() -> new IllegalArgumentException("보드를 찾을 수 없습니다."));
 
         if (userWorkspaceRepository
                 .findByUserIdAndWorkspaceId(authUser.getId(), board.getWorkspaceId())
@@ -123,8 +126,40 @@ public class BoardService {
             throw new InvalidRequestException("워크스페이스 멤버가 아닙니다");
         }
 
-        return new BoardDetailResponseDto(
-                board.getId(), board.getName(), board.getBackground(), board.getWorkspaceId());
+        List<BoardList> boardLists = listRepository.findAllByBoardId(board.getId());
+
+        List<BoardListDetailResponseDto> listDtos =
+                boardLists.stream()
+                        .map(
+                                list -> {
+                                    List<Card> cards = cardRepository.findAllByListId(list.getId());
+
+                                    List<BoardCardDetailResponseDto> cardDtos =
+                                            cards.stream()
+                                                    .map(
+                                                            card ->
+                                                                    new BoardCardDetailResponseDto(
+                                                                            card.getId(),
+                                                                            card.getName(),
+                                                                            card.getDescription(),
+                                                                            card.getDueDate(),
+                                                                            card.getManagerId()))
+                                                    .collect(Collectors.toList());
+
+                                    return new BoardListDetailResponseDto(
+                                            list.getId(),
+                                            list.getName(),
+                                            list.getSequence(),
+                                            cardDtos);
+                                })
+                        .collect(Collectors.toList());
+
+        return new BoardDetailCardListResponseDto(
+                board.getId(),
+                board.getName(),
+                board.getBackground(),
+                board.getWorkspaceId(),
+                listDtos);
     }
 
     @Transactional
@@ -134,16 +169,22 @@ public class BoardService {
         User user =
                 userRepository
                         .findById(authUser.getId())
-                        .orElseThrow(() -> new IllegalArgumentException("해당 사용자를 찾을 수 없습니다."));
+                        .orElseThrow(() -> new IllegalArgumentException("사용자를 찾을 수 없습니다."));
 
-        if (!UserRole.ROLE_ADMIN.equals(user.getUserRole())) {
-            throw new AuthException("읽기 전용 권한으로 보드를 수정할 수 없습니다.");
+        UserWorkspace userWorkspace =
+                userWorkspaceRepository
+                        .findByUserIdAndWorkspaceId(
+                                user.getId(), boardUpdateRequestDto.getWorkspaceId())
+                        .orElseThrow(() -> new IllegalArgumentException("해당 워크스페이스에 소속되어 있지 않습니다."));
+
+        if (userWorkspace.getWorkspaceUserRole() == WorkspaceUserRole.READ_ONLY) {
+            throw new AuthException("해당 워크스페이스를 수정할 권한이 없습니다.");
         }
 
         Board board =
                 boardRepository
                         .findById(id)
-                        .orElseThrow(() -> new IllegalArgumentException("해당 보드를 찾을 수 없습니다."));
+                        .orElseThrow(() -> new IllegalArgumentException("보드를 찾을 수 없습니다."));
 
         board.update(boardUpdateRequestDto.getName(), boardUpdateRequestDto.getBackground());
 
@@ -161,15 +202,22 @@ public class BoardService {
         User user =
                 userRepository
                         .findById(authUser.getId())
-                        .orElseThrow(() -> new IllegalArgumentException("해당 사용자를 찾을 수 없습니다."));
+                        .orElseThrow(() -> new IllegalArgumentException("사용자를 찾을 수 없습니다."));
 
-        if (!UserRole.ROLE_ADMIN.equals(user.getUserRole())) {
-            throw new AuthException("읽기 전용 권한으로 보드를 삭제할 수 없습니다.");
-        }
         Board board =
                 boardRepository
                         .findById(id)
-                        .orElseThrow(() -> new IllegalArgumentException("해당 보드를 찾을 수 없습니다."));
+                        .orElseThrow(() -> new IllegalArgumentException("보드를 찾을 수 없습니다."));
+
+        UserWorkspace userWorkspace =
+                userWorkspaceRepository
+                        .findByUserIdAndWorkspaceId(user.getId(), board.getWorkspaceId())
+                        .orElseThrow(
+                                () -> new AuthException("해당 워크스페이스에 소속되어 있지 않습니다."));
+
+        if (userWorkspace.getWorkspaceUserRole() == WorkspaceUserRole.READ_ONLY) {
+            throw new AuthException("해당 워크스페이스를 수정할 권한이 없습니다.");
+        }
 
         boardRepository.delete(board);
     }

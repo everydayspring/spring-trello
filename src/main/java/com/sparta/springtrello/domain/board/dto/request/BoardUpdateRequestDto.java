@@ -6,4 +6,5 @@ import lombok.Getter;
 public class BoardUpdateRequestDto {
     private String name;
     private String background;
+    private Long workspaceId;
 }
