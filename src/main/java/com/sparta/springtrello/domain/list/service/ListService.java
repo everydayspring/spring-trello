@@ -11,6 +11,7 @@ import com.sparta.springtrello.domain.board.entitiy.Board;
 import com.sparta.springtrello.domain.board.repository.BoardRepository;
 import com.sparta.springtrello.domain.card.entity.QCard;
 import com.sparta.springtrello.domain.common.dto.AuthUser;
+import com.sparta.springtrello.domain.common.exception.InvalidRequestException;
 import com.sparta.springtrello.domain.list.dto.request.ListRequestDto;
 import com.sparta.springtrello.domain.list.entity.BoardList;
 import com.sparta.springtrello.domain.list.entity.QBoardList;
@@ -142,5 +143,35 @@ public class ListService {
         queryFactory.delete(card).where(card.listId.eq(listId)).execute();
 
         listRepository.delete(boardList);
+    }
+
+    @Transactional
+    public void swapList(Long list1Id, Long list2Id, AuthUser authUser) {
+
+        BoardList list1 =
+                listRepository
+                        .findById(list1Id)
+                        .orElseThrow(() -> new IllegalArgumentException("List 1을 찾을 수 없습니다."));
+
+        BoardList list2 =
+                listRepository
+                        .findById(list2Id)
+                        .orElseThrow(() -> new IllegalArgumentException("List 2를 찾을 수 없습니다."));
+
+        if (!list1.getBoardId().equals(list2.getBoardId())) {
+            throw new InvalidRequestException("리스트는 같은 보드에 있어야 합니다.");
+        }
+
+        UserWorkspace userWorkspace =
+                userWorkspaceRepository
+                        .findByUserIdAndWorkspaceId(authUser.getId(), list1.getBoardId())
+                        .orElseThrow(() -> new InvalidRequestException("해당 보드에 대한 권한이 없습니다."));
+
+        Long tempSequence = list1.getSequence();
+        list1.setSequence(list2.getSequence());
+        list2.setSequence(tempSequence);
+
+        listRepository.save(list1);
+        listRepository.save(list2);
     }
 }
