@@ -1,6 +1,5 @@
 package com.sparta.springtrello.domain.comment.service;
 
-import com.sparta.springtrello.domain.common.exception.InvalidRequestException;
 import jakarta.persistence.EntityNotFoundException;
 
 import org.springframework.security.access.AccessDeniedException;
@@ -17,6 +16,7 @@ import com.sparta.springtrello.domain.comment.dto.response.CommentResponse;
 import com.sparta.springtrello.domain.comment.entity.Comment;
 import com.sparta.springtrello.domain.comment.repository.CommentRepository;
 import com.sparta.springtrello.domain.common.dto.AuthUser;
+import com.sparta.springtrello.domain.common.exception.InvalidRequestException;
 import com.sparta.springtrello.domain.list.entity.BoardList;
 import com.sparta.springtrello.domain.list.repository.ListRepository;
 import com.sparta.springtrello.domain.user.entity.User;
