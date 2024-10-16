@@ -240,7 +240,7 @@ public class CardService {
             throw new AccessDeniedException("읽기 전용 권한을 가진 유저는 카드를 삭제할 수 없습니다.");
         }
 
-        cardRepository.delete(card);
+        cardRepository.deleteCard(card.getId());
 
         List<Card> cards = cardRepository.findCardsReorder(card.getListId(), card.getSequence());
 
