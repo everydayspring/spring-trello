@@ -31,10 +31,13 @@ public class ListController {
 
     // 조회
     @GetMapping
-    public ResponseEntity<List<BoardList>> getAllLists(
-            @RequestParam Long boardId, @AuthenticationPrincipal AuthUser authUser) {
-        List<BoardList> lists = listService.getListsByBoardId(boardId, authUser);
-        return ResponseEntity.ok(lists);
+    public ResponseEntity<?> getLists(@RequestBody ListRequestDto listRequestDto) {
+
+        Long boardId = listRequestDto.getBoardId();
+        // 이 boardId를 사용해 서비스 호출
+        List<BoardList> boardLists = listService.getListsByBoardId(boardId);
+
+        return ResponseEntity.ok(boardLists);
     }
 
     // 수정
@@ -51,7 +54,9 @@ public class ListController {
     @DeleteMapping("/{id}")
     public ResponseEntity<Void> deleteList(
             @PathVariable Long id, @AuthenticationPrincipal AuthUser authUser) {
+
         listService.deleteList(id, authUser);
+
         return ResponseEntity.noContent().build();
     }
 }
