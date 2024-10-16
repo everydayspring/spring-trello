@@ -72,7 +72,6 @@ public class ListService {
     // 리스트 수정
     @Transactional
     public BoardList updateList(Long listId, ListRequestDto listRequestDto, AuthUser authUser) {
-
         Board board =
                 boardRepository
                         .findById(listRequestDto.getBoardId())
