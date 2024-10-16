@@ -34,6 +34,8 @@ public class User extends Timestamped {
     @Enumerated(EnumType.STRING)
     private UserRole userRole;
 
+    private boolean isDeleted = false;
+
     public User(String email, String password, UserRole userRole) {
         this.email = email;
         this.password = password;
@@ -51,6 +53,14 @@ public class User extends Timestamped {
                 authUser.getId(),
                 authUser.getEmail(),
                 UserRole.of(String.valueOf(authUser.getAuthorities().stream().findFirst().get())));
+    }
+
+    public void changeIsDeleted() {
+        this.isDeleted = true; // 탈퇴 처리
+    }
+
+    public boolean isDeleted() {
+        return this.isDeleted; // 탈퇴 여부 확인
     }
 
     public void changePassword(String password) {

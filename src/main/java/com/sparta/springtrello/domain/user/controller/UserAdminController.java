@@ -4,7 +4,6 @@ import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.PatchMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.sparta.springtrello.domain.common.dto.AuthUser;
@@ -15,7 +14,6 @@ import com.sparta.springtrello.domain.user.service.UserAdminService;
 import lombok.RequiredArgsConstructor;
 
 @RestController
-@RequestMapping("/api")
 @RequiredArgsConstructor
 public class UserAdminController {
 

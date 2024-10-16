@@ -12,6 +12,7 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.sparta.springtrello.domain.comment.dto.request.CommentRequest;
+import com.sparta.springtrello.domain.comment.dto.request.CommentUpdateRequest;
 import com.sparta.springtrello.domain.comment.dto.response.CommentResponse;
 import com.sparta.springtrello.domain.comment.service.CommentService;
 import com.sparta.springtrello.domain.common.dto.AuthUser;
@@ -35,8 +36,8 @@ public class CommentController {
     public ResponseEntity<CommentResponse> updateComment(
             @PathVariable Long id,
             @AuthenticationPrincipal AuthUser authUser,
-            @Valid @RequestBody CommentRequest commentRequest) {
-        return ResponseEntity.ok(commentService.updateComment(id, authUser, commentRequest));
+            @Valid @RequestBody CommentUpdateRequest commentUpdateRequest) {
+        return ResponseEntity.ok(commentService.updateComment(id, authUser, commentUpdateRequest));
     }
 
     @DeleteMapping("/comments/{id}")

@@ -30,12 +30,15 @@ public class AuthService {
     public SignupResponse signup(SignupRequest signupRequest) {
         validatePassword(signupRequest.getPassword());
 
+        if (userRepository.existsByEmailAndIsDeletedTrue(signupRequest.getEmail())) {
+            throw new InvalidRequestException("탈퇴한 유저의 이메일은 재사용할 수 없습니다.");
+        }
+
         if (userRepository.existsByEmail(signupRequest.getEmail())) {
             throw new InvalidRequestException("이미 존재하는 이메일입니다.");
         }
 
         String encodedPassword = passwordEncoder.encode(signupRequest.getPassword());
-
         UserRole userRole = UserRole.of(signupRequest.getUserRole());
 
         User newUser = new User(signupRequest.getEmail(), encodedPassword, userRole);

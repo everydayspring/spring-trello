@@ -74,15 +74,15 @@ public class TestService {
         cardRepository.save(new Card("card3", 3L, "description3", LocalDateTime.now(), 3L, 2L));
         cardRepository.save(new Card("card4", 4L, "description4", LocalDateTime.now(), 4L, 2L));
 
-        commentRepository.save(new Comment("emoji1", "content", 1L, 1L));
-        commentRepository.save(new Comment("emoji2", "content", 2L, 1L));
-        commentRepository.save(new Comment("emoji3", "content", 3L, 1L));
-        commentRepository.save(new Comment("emoji4", "content", 4L, 1L));
+        commentRepository.save(new Comment("emoji1", "content", 1L, 1L, 1L));
+        commentRepository.save(new Comment("emoji2", "content", 2L, 1L, 1L));
+        commentRepository.save(new Comment("emoji3", "content", 3L, 4L, 1L));
+        commentRepository.save(new Comment("emoji4", "content", 4L, 5L, 1L));
 
         userWorkspaceRepository.save(new UserWorkspace(1L, 1L, WorkspaceUserRole.WORKSPACE));
         userWorkspaceRepository.save(new UserWorkspace(1L, 2L, WorkspaceUserRole.WORKSPACE));
         userWorkspaceRepository.save(new UserWorkspace(1L, 3L, WorkspaceUserRole.WORKSPACE));
-        userWorkspaceRepository.save(new UserWorkspace(1L, 4L, WorkspaceUserRole.WORKSPACE));
-        userWorkspaceRepository.save(new UserWorkspace(1L, 5L, WorkspaceUserRole.WORKSPACE));
+        userWorkspaceRepository.save(new UserWorkspace(1L, 4L, WorkspaceUserRole.BOARD));
+        userWorkspaceRepository.save(new UserWorkspace(1L, 5L, WorkspaceUserRole.READ_ONLY));
     }
 }
