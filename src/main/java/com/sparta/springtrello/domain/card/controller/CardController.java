@@ -3,6 +3,8 @@ package com.sparta.springtrello.domain.card.controller;
 import java.io.IOException;
 import java.util.List;
 
+import jakarta.validation.Valid;
+
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.*;
@@ -10,6 +12,7 @@ import org.springframework.web.multipart.MultipartFile;
 
 import com.sparta.springtrello.config.ApiResponse;
 import com.sparta.springtrello.domain.card.dto.CreateCardDto;
+import com.sparta.springtrello.domain.card.dto.GetCardsDto;
 import com.sparta.springtrello.domain.card.entity.Card;
 import com.sparta.springtrello.domain.card.service.CardService;
 import com.sparta.springtrello.domain.common.dto.AuthUser;
@@ -37,11 +40,16 @@ public class CardController {
     }
 
     // 조회
-    @GetMapping("/{listId}")
-    public ResponseEntity<List<Card>> getCardsByListId(
-            @PathVariable Long listId, @AuthenticationPrincipal AuthUser authUser) {
-        List<Card> cards = cardService.findAllByListId(listId, authUser);
-        return ResponseEntity.ok(cards);
+    @GetMapping
+    public ResponseEntity<ApiResponse<?>> getCards(
+            @Valid @RequestBody GetCardsDto.Request request,
+            @AuthenticationPrincipal AuthUser authUser) {
+        List<Card> cards = cardService.findAllByListId(request.getListId(), authUser);
+
+        List<GetCardsDto.Response> cardResponses =
+                cards.stream().map(GetCardsDto.Response::new).toList();
+
+        return ResponseEntity.ok(ApiResponse.success(cardResponses));
     }
 
     // 수정
