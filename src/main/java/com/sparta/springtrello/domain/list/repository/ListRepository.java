@@ -8,4 +8,6 @@ import com.sparta.springtrello.domain.list.entity.BoardList;
 
 public interface ListRepository extends JpaRepository<BoardList, Long> {
     Long countByBoardId(Long id);
+
+    List<BoardList> findAllByBoardId(Long boardId);
 }
