@@ -62,7 +62,23 @@ public class ListService {
     }
 
     // 리스트 조회
-    public List<BoardList> getListsByBoardId(Long boardId) {
+    public List<BoardList> getListsByBoardId(
+            Long boardId, ListRequestDto listRequestDto, AuthUser authUser) {
+        Board board =
+                boardRepository
+                        .findById(listRequestDto.getBoardId())
+                        .orElseThrow(() -> new IllegalArgumentException("해당 보드를 찾을 수 없습니다."));
+        Long workspaceId = board.getWorkspaceId();
+        UserWorkspace userWorkspace =
+                userWorkspaceRepository
+                        .findByUserIdAndWorkspaceId(authUser.getId(), board.getWorkspaceId())
+                        .orElseThrow(
+                                () -> new IllegalArgumentException("해당 워크스페이스에 대한 접근 권한이 없습니다."));
+
+        if (userWorkspace.getWorkspaceUserRole() == WorkspaceUserRole.READ_ONLY) {
+            throw new AccessDeniedException("읽기 전용 권한을 가진 유저는 리스트를 수정할 수 없습니다.");
+        }
+
         QBoardList boardList = QBoardList.boardList;
 
         // 보드에 속한 모든 리스트 조회

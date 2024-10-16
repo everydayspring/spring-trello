@@ -69,11 +69,28 @@ public class CardService {
     }
 
     // 카드 조회
-    public List<Card> findAllByListId(Long listId) {
+    public List<Card> findAllByListId(Long listId, AuthUser authUser) {
         // 리스트 존재 여부 확인
-        listRepository
-                .findById(listId)
-                .orElseThrow(() -> new IllegalArgumentException("해당 리스트를 찾을 수 없습니다."));
+        BoardList boardList =
+                listRepository
+                        .findById(listId)
+                        .orElseThrow(() -> new IllegalArgumentException("해당 리스트를 찾을 수 없습니다."));
+
+        Board board =
+                boardRepository
+                        .findById(boardList.getBoardId())
+                        .orElseThrow(
+                                () -> new IllegalArgumentException("해당 리스트가 속한 보드를 찾을 수 없습니다."));
+
+        UserWorkspace userWorkspace =
+                userWorkspaceRepository
+                        .findByUserIdAndWorkspaceId(authUser.getId(), board.getWorkspaceId())
+                        .orElseThrow(
+                                () -> new IllegalArgumentException("해당 워크스페이스에 대한 접근 권한이 없습니다."));
+
+        if (userWorkspace.getWorkspaceUserRole() == WorkspaceUserRole.READ_ONLY) {
+            throw new AccessDeniedException("읽기 전용 권한을 가진 유저는 카드를 생성할 수 없습니다.");
+        }
 
         // 리스트에 속한 모든 카드 조회
         return cardRepository.findAllByListId(listId);
