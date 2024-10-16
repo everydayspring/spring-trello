@@ -31,11 +31,14 @@ public class ListController {
 
     // 조회
     @GetMapping
-    public ResponseEntity<?> getLists(@RequestBody ListRequestDto listRequestDto) {
+    public ResponseEntity<?> getLists(
+            @RequestBody ListRequestDto listRequestDto,
+            @AuthenticationPrincipal AuthUser authUser) {
 
         Long boardId = listRequestDto.getBoardId();
         // 이 boardId를 사용해 서비스 호출
-        List<BoardList> boardLists = listService.getListsByBoardId(boardId);
+        List<BoardList> boardLists =
+                listService.getListsByBoardId(boardId, listRequestDto, authUser);
 
         return ResponseEntity.ok(boardLists);
     }

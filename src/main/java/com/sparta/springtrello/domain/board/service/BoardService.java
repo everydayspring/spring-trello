@@ -117,7 +117,9 @@ public class BoardService {
                         .findById(id)
                         .orElseThrow(() -> new IllegalArgumentException("해당 보드를 찾을 수 없습니다."));
 
-        if (userWorkspaceRepository.findByUserIdAndWorkspaceId(authUser.getId(), board.getWorkspaceId()).isEmpty()) {
+        if (userWorkspaceRepository
+                .findByUserIdAndWorkspaceId(authUser.getId(), board.getWorkspaceId())
+                .isEmpty()) {
             throw new InvalidRequestException("워크스페이스 멤버가 아닙니다");
         }
 
