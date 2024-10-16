@@ -7,7 +7,6 @@ import org.springframework.transaction.annotation.Transactional;
 import com.sparta.springtrello.domain.board.entitiy.Board;
 import com.sparta.springtrello.domain.board.repository.BoardRepository;
 import com.sparta.springtrello.domain.card.repository.CardRepository;
-import com.sparta.springtrello.domain.comment.entity.Comment;
 import com.sparta.springtrello.domain.comment.repository.CommentRepository;
 import com.sparta.springtrello.domain.list.entity.BoardList;
 import com.sparta.springtrello.domain.list.repository.ListRepository;
@@ -75,10 +74,10 @@ public class TestService {
         //        cardRepository.save(new Card("card4", 4L, "description4", LocalDateTime.now(), 4L,
         // 2L));
 
-        commentRepository.save(new Comment("emoji1", "content", 1L, 1L, 1L));
-        commentRepository.save(new Comment("emoji2", "content", 2L, 1L, 1L));
-        commentRepository.save(new Comment("emoji3", "content", 3L, 4L, 1L));
-        commentRepository.save(new Comment("emoji4", "content", 4L, 5L, 1L));
+        //        commentRepository.save(new Comment("emoji1", "content", 1L, 1L, 1L));
+        //        commentRepository.save(new Comment("emoji2", "content", 2L, 1L, 1L));
+        //        commentRepository.save(new Comment("emoji3", "content", 3L, 4L, 1L));
+        //        commentRepository.save(new Comment("emoji4", "content", 4L, 5L, 1L));
 
         userWorkspaceRepository.save(new UserWorkspace(1L, 1L, WorkspaceUserRole.WORKSPACE));
         userWorkspaceRepository.save(new UserWorkspace(1L, 2L, WorkspaceUserRole.WORKSPACE));

@@ -32,9 +32,7 @@ public class FileUploadService {
             // S3에 파일 업로드
             s3Client.putObject(
                     PutObjectRequest.builder().bucket(bucketName).key(fileName).build(),
-                    RequestBody.fromInputStream(
-                            file.getInputStream(), file.getSize())
-                    );
+                    RequestBody.fromInputStream(file.getInputStream(), file.getSize()));
         } catch (S3Exception e) {
             throw new IllegalStateException("Failed to upload the file to S3", e);
         }

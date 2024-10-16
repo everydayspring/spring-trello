@@ -64,4 +64,9 @@ public class Card extends Timestamped {
         this.fileName = fileName;
         this.fileUrl = fileUrl;
     }
+
+    public void addFile(String fileName, String fileUrl) {
+        this.fileName = fileName;
+        this.fileUrl = fileUrl;
+    }
 }
