@@ -54,14 +54,16 @@ public class CardController {
 
     // 수정
     @PutMapping("/{id}")
-    public ResponseEntity<Card> updateCard(
+    public ResponseEntity<ApiResponse<?>> updateCard(
             @PathVariable Long id,
             @ModelAttribute CreateCardDto.Request request,
             @RequestParam("file") MultipartFile file,
             @AuthenticationPrincipal AuthUser authUser)
             throws IOException {
-        Card updatedCard = cardService.updateCard(id, authUser, request, file); // 파일 전달
-        return ResponseEntity.ok(updatedCard);
+
+        Card card = cardService.updateCard(id, authUser, request, file);
+
+        return ResponseEntity.ok(ApiResponse.success(new CreateCardDto.Response(card)));
     }
 
     // 삭제
