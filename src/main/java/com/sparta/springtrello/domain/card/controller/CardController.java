@@ -68,9 +68,9 @@ public class CardController {
 
     // 삭제
     @DeleteMapping("/{id}")
-    public ResponseEntity<Void> deleteCard(
+    public ResponseEntity<ApiResponse<?>> deleteCard(
             @PathVariable Long id, @AuthenticationPrincipal AuthUser authUser) {
         cardService.deleteCard(id, authUser);
-        return ResponseEntity.noContent().build();
+        return ResponseEntity.ok(ApiResponse.successWithNoContent());
     }
 }

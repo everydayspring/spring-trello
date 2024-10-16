@@ -2,12 +2,12 @@ package com.sparta.springtrello.domain.card.repository;
 
 import java.util.List;
 
-import com.sparta.springtrello.domain.comment.entity.QComment;
 import org.springframework.stereotype.Repository;
 
 import com.querydsl.jpa.impl.JPAQueryFactory;
 import com.sparta.springtrello.domain.card.entity.Card;
 import com.sparta.springtrello.domain.card.entity.QCard;
+import com.sparta.springtrello.domain.comment.entity.QComment;
 
 import lombok.RequiredArgsConstructor;
 
@@ -36,14 +36,8 @@ public class CardQueryRepositoryImpl implements CardQueryRepository {
         QComment comment = QComment.comment;
         QCard card = QCard.card;
 
-        queryFactory
-                .delete(comment)
-                .where(comment.cardId.eq(cardId))
-                .execute();
+        queryFactory.delete(comment).where(comment.cardId.eq(cardId)).execute();
 
-        queryFactory
-                .delete(card)
-                .where(card.id.eq(cardId))
-                .execute();
+        queryFactory.delete(card).where(card.id.eq(cardId)).execute();
     }
 }
