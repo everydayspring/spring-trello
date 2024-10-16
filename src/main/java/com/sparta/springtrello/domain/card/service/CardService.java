@@ -11,7 +11,7 @@ import org.springframework.web.multipart.MultipartFile;
 import com.querydsl.jpa.impl.JPAQueryFactory;
 import com.sparta.springtrello.domain.board.entitiy.Board;
 import com.sparta.springtrello.domain.board.repository.BoardRepository;
-import com.sparta.springtrello.domain.card.dto.CardRequestDto;
+import com.sparta.springtrello.domain.card.dto.CreateCardDto;
 import com.sparta.springtrello.domain.card.entity.Card;
 import com.sparta.springtrello.domain.card.entity.QCard;
 import com.sparta.springtrello.domain.card.repository.CardRepository;
@@ -44,12 +44,12 @@ public class CardService {
 
     // 카드 생성
     @Transactional
-    public Card createCard(AuthUser authUser, CardRequestDto cardRequestDto, MultipartFile file)
+    public Card createCard(AuthUser authUser, CreateCardDto.Request request, MultipartFile file)
             throws IOException {
 
         BoardList boardList =
                 listRepository
-                        .findById(cardRequestDto.getListId())
+                        .findById(request.getListId())
                         .orElseThrow(() -> new IllegalArgumentException("List not found"));
 
         Board board =
@@ -66,14 +66,13 @@ public class CardService {
             throw new AccessDeniedException("READ ONLY 유저는 카드를 생성할 수 없습니다.");
         }
 
-        if (userRepository.findById(cardRequestDto.getManagerId()).isEmpty()) {
+        if (userRepository.findById(request.getManagerId()).isEmpty()) {
             throw new InvalidRequestException("Manager not found");
         }
 
         UserWorkspace userWorkspace2 =
                 userWorkspaceRepository
-                        .findByUserIdAndWorkspaceId(
-                                cardRequestDto.getManagerId(), board.getWorkspaceId())
+                        .findByUserIdAndWorkspaceId(request.getManagerId(), board.getWorkspaceId())
                         .orElseThrow(() -> new IllegalArgumentException("담당자가 워크스페이스에 없습니다."));
 
         if (userWorkspace2.getWorkspaceUserRole() == WorkspaceUserRole.READ_ONLY) {
@@ -81,17 +80,17 @@ public class CardService {
         }
 
         // 리스트 내 순서 세팅
-        Long sequence = cardRepository.countByListId(cardRequestDto.getListId());
+        Long sequence = cardRepository.countByListId(request.getListId());
         sequence++;
 
         Card card =
                 new Card(
-                        cardRequestDto.getName(),
+                        request.getName(),
                         sequence,
-                        cardRequestDto.getDescription(),
-                        cardRequestDto.getDueDate(),
-                        cardRequestDto.getManagerId(),
-                        cardRequestDto.getListId(),
+                        request.getDescription(),
+                        request.getDueDate(),
+                        request.getManagerId(),
+                        request.getListId(),
                         null,
                         null);
 
@@ -133,7 +132,7 @@ public class CardService {
     // 카드 수정
     @Transactional
     public Card updateCard(
-            Long cardId, AuthUser authUser, CardRequestDto cardRequestDto, MultipartFile file)
+            Long cardId, AuthUser authUser, CreateCardDto.Request request, MultipartFile file)
             throws IOException {
 
         Card card =
@@ -142,7 +141,7 @@ public class CardService {
                         .orElseThrow(() -> new IllegalArgumentException("해당 카드를 찾을 수 없습니다."));
         BoardList boardList =
                 listRepository
-                        .findById(cardRequestDto.getListId())
+                        .findById(request.getListId())
                         .orElseThrow(() -> new IllegalArgumentException("해당 리스트를 찾을 수 없습니다."));
 
         Board board =
@@ -162,7 +161,7 @@ public class CardService {
         }
         User manager =
                 userRepository
-                        .findById(cardRequestDto.getManagerId())
+                        .findById(request.getManagerId())
                         .orElseThrow(() -> new IllegalArgumentException("매니저 ID가 유효하지 않습니다."));
 
         UserWorkspace userWorkspace2 =
@@ -190,7 +189,7 @@ public class CardService {
         //                manager.getId());
 
         // 리스트 ID 변경 여부 확인
-        Long newListId = cardRequestDto.getListId();
+        Long newListId = request.getListId();
         if (!card.getListId().equals(newListId)) {
             // 리스트가 변경된 경우
             card.setListId(newListId);
