@@ -8,12 +8,10 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.multipart.MultipartFile;
 
-import com.querydsl.jpa.impl.JPAQueryFactory;
 import com.sparta.springtrello.domain.board.entitiy.Board;
 import com.sparta.springtrello.domain.board.repository.BoardRepository;
 import com.sparta.springtrello.domain.card.dto.CreateCardDto;
 import com.sparta.springtrello.domain.card.entity.Card;
-import com.sparta.springtrello.domain.card.entity.QCard;
 import com.sparta.springtrello.domain.card.repository.CardRepository;
 import com.sparta.springtrello.domain.common.dto.AuthUser;
 import com.sparta.springtrello.domain.common.exception.InvalidRequestException;
@@ -36,8 +34,6 @@ public class CardService {
     private final UserRepository userRepository;
     private final BoardRepository boardRepository;
     private final UserWorkspaceRepository userWorkspaceRepository;
-
-    private final JPAQueryFactory queryFactory;
 
     private final FileUploadService fileUploadService;
 
@@ -210,7 +206,7 @@ public class CardService {
             card.addFile(file.getOriginalFilename(), fileUrl);
         }
 
-        return cardRepository.save(card);
+        return card;
     }
 
     // 카드 삭제
@@ -221,6 +217,7 @@ public class CardService {
                 cardRepository
                         .findById(cardId)
                         .orElseThrow(() -> new IllegalArgumentException("해당 카드를 찾을 수 없습니다."));
+
         BoardList boardList =
                 listRepository
                         .findById(card.getListId())
@@ -245,24 +242,10 @@ public class CardService {
 
         cardRepository.delete(card);
 
-        List<Card> reorder =
-                queryFactory
-                        .selectFrom(QCard.card)
-                        .where(
-                                QCard.card
-                                        .listId
-                                        .eq(card.getListId())
-                                        .and(
-                                                QCard.card.sequence.gt(
-                                                        card.getSequence()))) // 삭제된 카드의 순서보다 큰
-                        // 카드들만 조회
-                        .orderBy(QCard.card.sequence.asc()) // 기존 순서대로 정렬
-                        .fetch();
+        List<Card> cards = cardRepository.findCardsReorder(card.getListId(), card.getSequence());
 
-        for (int i = 0; i < reorder.size(); i++) {
-            Card remainingCard = reorder.get(i);
-            remainingCard.setSequence(remainingCard.getSequence() - 1); // 순서를 1씩 줄임
-            cardRepository.save(remainingCard); // 업데이트된 순서 저장
+        for (Card targetCard : cards) {
+            targetCard.setSequence(targetCard.getSequence() - 1);
         }
     }
 }
