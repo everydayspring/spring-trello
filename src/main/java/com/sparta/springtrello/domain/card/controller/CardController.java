@@ -44,7 +44,7 @@ public class CardController {
     public ResponseEntity<ApiResponse<?>> getCards(
             @Valid @RequestBody GetCardsDto.Request request,
             @AuthenticationPrincipal AuthUser authUser) {
-        List<Card> cards = cardService.findAllByListId(request.getListId(), authUser);
+        List<Card> cards = cardService.getCards(request.getListId(), authUser);
 
         List<GetCardsDto.Response> cardResponses =
                 cards.stream().map(GetCardsDto.Response::new).toList();
@@ -56,8 +56,8 @@ public class CardController {
     @PutMapping("/{id}")
     public ResponseEntity<ApiResponse<?>> updateCard(
             @PathVariable Long id,
-            @ModelAttribute CreateCardDto.Request request,
-            @RequestParam("file") MultipartFile file,
+            @RequestPart("data") CreateCardDto.Request request,
+            @RequestPart("file") MultipartFile file,
             @AuthenticationPrincipal AuthUser authUser)
             throws IOException {
 

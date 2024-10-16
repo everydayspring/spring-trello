@@ -52,17 +52,17 @@ public class Card extends Timestamped {
 
     public void updateCard(
             String name,
+            Long sequence,
             String description,
             LocalDateTime dueDate,
             Long managerId,
-            String fileName,
-            String fileUrl) {
+            Long listId) {
         this.name = name;
+        this.sequence = sequence;
         this.description = description;
         this.dueDate = dueDate;
         this.managerId = managerId;
-        this.fileName = fileName;
-        this.fileUrl = fileUrl;
+        this.listId = listId;
     }
 
     public void addFile(String fileName, String fileUrl) {
