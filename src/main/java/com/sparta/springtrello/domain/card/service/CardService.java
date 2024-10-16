@@ -49,20 +49,20 @@ public class CardService {
         BoardList boardList =
                 listRepository
                         .findById(request.getListId())
-                        .orElseThrow(() -> new IllegalArgumentException("List not found"));
+                        .orElseThrow(() -> new InvalidRequestException("List not found"));
 
         Board board =
                 boardRepository
                         .findById(boardList.getBoardId())
-                        .orElseThrow(() -> new IllegalArgumentException("Board not found"));
+                        .orElseThrow(() -> new InvalidRequestException("Board not found"));
 
         UserWorkspace userWorkspace =
                 userWorkspaceRepository
                         .findByUserIdAndWorkspaceId(authUser.getId(), board.getWorkspaceId())
-                        .orElseThrow(() -> new IllegalArgumentException("워크스페이스에 대한 권한이 없습니다."));
+                        .orElseThrow(() -> new InvalidRequestException("워크스페이스에 대한 권한이 없습니다."));
 
         if (userWorkspace.getWorkspaceUserRole() == WorkspaceUserRole.READ_ONLY) {
-            throw new AccessDeniedException("READ ONLY 유저는 카드를 생성할 수 없습니다.");
+            throw new InvalidRequestException("READ ONLY 유저는 카드를 생성할 수 없습니다.");
         }
 
         if (userRepository.findById(request.getManagerId()).isEmpty()) {
@@ -72,10 +72,10 @@ public class CardService {
         UserWorkspace managerWorkspace =
                 userWorkspaceRepository
                         .findByUserIdAndWorkspaceId(request.getManagerId(), board.getWorkspaceId())
-                        .orElseThrow(() -> new IllegalArgumentException("담당자가 워크스페이스에 없습니다."));
+                        .orElseThrow(() -> new InvalidRequestException("담당자가 워크스페이스에 없습니다."));
 
         if (managerWorkspace.getWorkspaceUserRole() == WorkspaceUserRole.READ_ONLY) {
-            throw new AccessDeniedException("READ ONLY 유저는 담당자로 등록할 수 없습니다.");
+            throw new InvalidRequestException("READ ONLY 유저는 담당자로 등록할 수 없습니다.");
         }
 
         Long sequence = cardRepository.countByListId(request.getListId());
@@ -110,13 +110,13 @@ public class CardService {
         BoardList boardList =
                 listRepository
                         .findById(listId)
-                        .orElseThrow(() -> new IllegalArgumentException("해당 리스트를 찾을 수 없습니다."));
+                        .orElseThrow(() -> new InvalidRequestException("해당 리스트를 찾을 수 없습니다."));
 
         Board board =
                 boardRepository
                         .findById(boardList.getBoardId())
                         .orElseThrow(
-                                () -> new IllegalArgumentException("해당 리스트가 속한 보드를 찾을 수 없습니다."));
+                                () -> new InvalidRequestException("해당 리스트가 속한 보드를 찾을 수 없습니다."));
 
         if (userWorkspaceRepository
                 .findByUserIdAndWorkspaceId(authUser.getId(), board.getWorkspaceId())
@@ -136,25 +136,25 @@ public class CardService {
         Card card =
                 cardRepository
                         .findById(cardId)
-                        .orElseThrow(() -> new IllegalArgumentException("Card not found"));
+                        .orElseThrow(() -> new InvalidRequestException("Card not found"));
 
         BoardList boardList =
                 listRepository
                         .findById(card.getListId())
-                        .orElseThrow(() -> new IllegalArgumentException("List not found"));
+                        .orElseThrow(() -> new InvalidRequestException("List not found"));
 
         Board board =
                 boardRepository
                         .findById(boardList.getBoardId())
-                        .orElseThrow(() -> new IllegalArgumentException("Board not found"));
+                        .orElseThrow(() -> new InvalidRequestException("Board not found"));
 
         UserWorkspace userWorkspace =
                 userWorkspaceRepository
                         .findByUserIdAndWorkspaceId(authUser.getId(), board.getWorkspaceId())
-                        .orElseThrow(() -> new IllegalArgumentException("워크스페이스에 대한 권한이 없습니다."));
+                        .orElseThrow(() -> new InvalidRequestException("워크스페이스에 대한 권한이 없습니다."));
 
         if (userWorkspace.getWorkspaceUserRole() == WorkspaceUserRole.READ_ONLY) {
-            throw new AccessDeniedException("READ ONLY 유저는 카드를 수정할 수 없습니다.");
+            throw new InvalidRequestException("READ ONLY 유저는 카드를 수정할 수 없습니다.");
         }
 
         Long sequence = card.getSequence();
@@ -163,21 +163,21 @@ public class CardService {
             BoardList newList =
                     listRepository
                             .findById(request.getListId())
-                            .orElseThrow(() -> new IllegalArgumentException("List not found"));
+                            .orElseThrow(() -> new InvalidRequestException("List not found"));
 
             Board newBoard =
                     boardRepository
                             .findById(newList.getBoardId())
-                            .orElseThrow(() -> new IllegalArgumentException("Board not found"));
+                            .orElseThrow(() -> new InvalidRequestException("Board not found"));
 
             UserWorkspace newWorkspace =
                     userWorkspaceRepository
                             .findByUserIdAndWorkspaceId(authUser.getId(), newBoard.getWorkspaceId())
                             .orElseThrow(
-                                    () -> new IllegalArgumentException("워크스페이스에 대한 권한이 없습니다."));
+                                    () -> new InvalidRequestException("워크스페이스에 대한 권한이 없습니다."));
 
             if (newWorkspace.getWorkspaceUserRole() == WorkspaceUserRole.READ_ONLY) {
-                throw new AccessDeniedException("READ ONLY 유저는 카드를 수정할 수 없습니다.");
+                throw new InvalidRequestException("READ ONLY 유저는 카드를 수정할 수 없습니다.");
             }
 
             sequence = cardRepository.countByListId(newList.getId());
@@ -191,10 +191,10 @@ public class CardService {
         UserWorkspace managerWorkspace =
                 userWorkspaceRepository
                         .findByUserIdAndWorkspaceId(request.getManagerId(), board.getWorkspaceId())
-                        .orElseThrow(() -> new IllegalArgumentException("담당자가 워크스페이스에 없습니다."));
+                        .orElseThrow(() -> new InvalidRequestException("담당자가 워크스페이스에 없습니다."));
 
         if (managerWorkspace.getWorkspaceUserRole() == WorkspaceUserRole.READ_ONLY) {
-            throw new AccessDeniedException("READ ONLY 유저는 담당자로 등록할 수 없습니다.");
+            throw new InvalidRequestException("READ ONLY 유저는 담당자로 등록할 수 없습니다.");
         }
 
         card.updateCard(
@@ -223,28 +223,28 @@ public class CardService {
         Card card =
                 cardRepository
                         .findById(cardId)
-                        .orElseThrow(() -> new IllegalArgumentException("해당 카드를 찾을 수 없습니다."));
+                        .orElseThrow(() -> new InvalidRequestException("해당 카드를 찾을 수 없습니다."));
 
         BoardList boardList =
                 listRepository
                         .findById(card.getListId())
                         .orElseThrow(
-                                () -> new IllegalArgumentException("해당 카드가 속한 리스트를 찾을 수 없습니다."));
+                                () -> new InvalidRequestException("해당 카드가 속한 리스트를 찾을 수 없습니다."));
 
         Board board =
                 boardRepository
                         .findById(boardList.getBoardId())
                         .orElseThrow(
-                                () -> new IllegalArgumentException("해당 리스트가 속한 보드를 찾을 수 없습니다."));
+                                () -> new InvalidRequestException("해당 리스트가 속한 보드를 찾을 수 없습니다."));
 
         UserWorkspace userWorkspace =
                 userWorkspaceRepository
                         .findByUserIdAndWorkspaceId(authUser.getId(), board.getWorkspaceId())
                         .orElseThrow(
-                                () -> new IllegalArgumentException("해당 워크스페이스에 대한 접근 권한이 없습니다."));
+                                () -> new InvalidRequestException("해당 워크스페이스에 대한 접근 권한이 없습니다."));
 
         if (userWorkspace.getWorkspaceUserRole() == WorkspaceUserRole.READ_ONLY) {
-            throw new AccessDeniedException("읽기 전용 권한을 가진 유저는 카드를 삭제할 수 없습니다.");
+            throw new InvalidRequestException("읽기 전용 권한을 가진 유저는 카드를 삭제할 수 없습니다.");
         }
 
         cardRepository.deleteCard(card.getId());
