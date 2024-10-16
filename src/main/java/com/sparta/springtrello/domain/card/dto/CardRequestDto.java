@@ -11,7 +11,6 @@ import lombok.Setter;
 @NoArgsConstructor
 public class CardRequestDto {
     private String name;
-    // private Long sequence;
     private String description;
     private LocalDateTime dueDate;
     private Long managerId;

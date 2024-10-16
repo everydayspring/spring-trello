@@ -6,16 +6,20 @@ import org.springframework.security.access.AccessDeniedException;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import com.querydsl.jpa.impl.JPAQueryFactory;
 import com.sparta.springtrello.domain.board.entitiy.Board;
 import com.sparta.springtrello.domain.board.repository.BoardRepository;
 import com.sparta.springtrello.domain.card.dto.CardRequestDto;
 import com.sparta.springtrello.domain.card.entity.Card;
+import com.sparta.springtrello.domain.card.entity.QCard;
 import com.sparta.springtrello.domain.card.repository.CardRepository;
 import com.sparta.springtrello.domain.common.dto.AuthUser;
 import com.sparta.springtrello.domain.list.entity.BoardList;
 import com.sparta.springtrello.domain.list.repository.ListRepository;
+import com.sparta.springtrello.domain.user.entity.User;
 import com.sparta.springtrello.domain.user.entity.UserWorkspace;
 import com.sparta.springtrello.domain.user.enums.WorkspaceUserRole;
+import com.sparta.springtrello.domain.user.repository.UserRepository;
 import com.sparta.springtrello.domain.user.repository.UserWorkspaceRepository;
 
 import lombok.RequiredArgsConstructor;
@@ -27,8 +31,10 @@ public class CardService {
 
     private final CardRepository cardRepository;
     private final ListRepository listRepository;
+    private final UserRepository userRepository;
     private final BoardRepository boardRepository;
     private final UserWorkspaceRepository userWorkspaceRepository;
+    private final JPAQueryFactory queryFactory;
 
     // 카드 생성
     @Transactional
@@ -55,6 +61,21 @@ public class CardService {
             throw new AccessDeniedException("읽기 전용 권한을 가진 유저는 카드를 생성할 수 없습니다.");
         }
 
+        User manager =
+                userRepository
+                        .findById(cardRequestDto.getManagerId())
+                        .orElseThrow(() -> new IllegalArgumentException(" 매니저 ID가 유효하지 않습니다."));
+
+        UserWorkspace userWorkspace2 =
+                userWorkspaceRepository
+                        .findByUserIdAndWorkspaceId(manager.getId(), board.getWorkspaceId())
+                        .orElseThrow(
+                                () -> new IllegalArgumentException("해당 워크스페이스에 대한 접근 권한이 없습니다."));
+
+        if (userWorkspace2.getWorkspaceUserRole() == WorkspaceUserRole.READ_ONLY) {
+            throw new AccessDeniedException("읽기 전용 권한을 가진 유저는 카드를 생성할 수 없습니다.");
+        }
+
         // 카드 생성
         Card newCard =
                 new Card(
@@ -62,7 +83,7 @@ public class CardService {
                         null,
                         cardRequestDto.getDescription(),
                         cardRequestDto.getDueDate(),
-                        cardRequestDto.getManagerId(),
+                        manager.getId(),
                         cardRequestDto.getListId());
 
         Long currentCardCount = cardRepository.countByListId(cardRequestDto.getListId());
@@ -163,13 +184,27 @@ public class CardService {
         if (userWorkspace.getWorkspaceUserRole() == WorkspaceUserRole.READ_ONLY) {
             throw new AccessDeniedException("읽기 전용 권한을 가진 유저는 카드를 생성할 수 없습니다.");
         }
+        User manager =
+                userRepository
+                        .findById(cardRequestDto.getManagerId())
+                        .orElseThrow(() -> new IllegalArgumentException(" 매니저 ID가 유효하지 않습니다."));
+
+        UserWorkspace userWorkspace2 =
+                userWorkspaceRepository
+                        .findByUserIdAndWorkspaceId(manager.getId(), board.getWorkspaceId())
+                        .orElseThrow(
+                                () -> new IllegalArgumentException("해당 워크스페이스에 대한 접근 권한이 없습니다."));
+
+        if (userWorkspace2.getWorkspaceUserRole() == WorkspaceUserRole.READ_ONLY) {
+            throw new AccessDeniedException("읽기 전용 권한을 가진 유저는 카드를 생성할 수 없습니다.");
+        }
 
         // 카드 정보 수정
         card.updateCard(
                 cardRequestDto.getName(),
                 cardRequestDto.getDescription(),
                 cardRequestDto.getDueDate(),
-                cardRequestDto.getManagerId());
+                manager.getId());
 
         // 리스트 ID 변경 여부 확인
         Long newListId = cardRequestDto.getListId();
@@ -219,5 +254,25 @@ public class CardService {
         }
 
         cardRepository.delete(card);
+
+        List<Card> reorder =
+                queryFactory
+                        .selectFrom(QCard.card)
+                        .where(
+                                QCard.card
+                                        .listId
+                                        .eq(card.getListId())
+                                        .and(
+                                                QCard.card.sequence.gt(
+                                                        card.getSequence()))) // 삭제된 카드의 순서보다 큰
+                        // 카드들만 조회
+                        .orderBy(QCard.card.sequence.asc()) // 기존 순서대로 정렬
+                        .fetch();
+
+        for (int i = 0; i < reorder.size(); i++) {
+            Card remainingCard = reorder.get(i);
+            remainingCard.setSequence(remainingCard.getSequence() - 1); // 순서를 1씩 줄임
+            cardRepository.save(remainingCard); // 업데이트된 순서 저장
+        }
     }
 }

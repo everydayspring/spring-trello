@@ -143,6 +143,28 @@ public class ListService {
         queryFactory.delete(card).where(card.listId.eq(listId)).execute();
 
         listRepository.delete(boardList);
+
+        // 보드에 속한 남은 리스트들의 순서를 다시 설정
+        List<BoardList> reorder =
+                queryFactory
+                        .selectFrom(QBoardList.boardList)
+                        .where(
+                                QBoardList.boardList
+                                        .boardId
+                                        .eq(boardList.getBoardId())
+                                        .and(
+                                                QBoardList.boardList.sequence.gt(
+                                                        boardList.getSequence())))
+                        // 리스트들만 조회
+                        .orderBy(QBoardList.boardList.sequence.asc()) // 기존 순서대로 정렬
+                        .fetch();
+
+        // 순서를 다시 설정
+        for (int i = 0; i < reorder.size(); i++) {
+            BoardList list = reorder.get(i);
+            list.setSequence(list.getSequence() - 1); // 순서를 1씩 줄임
+            listRepository.save(list); // 업데이트된 순서 저장
+        }
     }
 
     @Transactional
