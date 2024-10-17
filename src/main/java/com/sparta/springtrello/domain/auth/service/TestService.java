@@ -42,10 +42,13 @@ public class TestService {
                         "user1@mail.com",
                         passwordEncoder.encode("abc123?!"),
                         UserRole.ROLE_ADMIN,
-                        "D07RU29MDRA"));
+                        "U07RJU30Y9L"));
         userRepository.save(
                 new User(
-                        "user2@mail.com", passwordEncoder.encode("abc123?!"), UserRole.ROLE_ADMIN));
+                        "user2@mail.com",
+                        passwordEncoder.encode("abc123?!"),
+                        UserRole.ROLE_ADMIN,
+                        "U07RVSSRMC7"));
         userRepository.save(
                 new User("user3@mail.com", passwordEncoder.encode("abc123?!"), UserRole.ROLE_USER));
         userRepository.save(
@@ -77,11 +80,10 @@ public class TestService {
         //        cardRepository.save(new Card("card4", 4L, "description4", LocalDateTime.now(), 4L,
         // 2L));
 
-
-        commentRepository.save(new Comment("emoji1", "content", 1L, 1L));
-        commentRepository.save(new Comment("emoji2", "content", 2L, 1L));
-        commentRepository.save(new Comment("emoji3", "content", 3L, 4L));
-        commentRepository.save(new Comment("emoji4", "content", 4L, 5L));
+        //        commentRepository.save(new Comment("emoji1", "content", 1L, 1L));
+        //        commentRepository.save(new Comment("emoji2", "content", 2L, 1L));
+        //        commentRepository.save(new Comment("emoji3", "content", 3L, 4L));
+        //        commentRepository.save(new Comment("emoji4", "content", 4L, 5L));
 
         userWorkspaceRepository.save(new UserWorkspace(1L, 1L, WorkspaceUserRole.WORKSPACE));
         userWorkspaceRepository.save(new UserWorkspace(1L, 2L, WorkspaceUserRole.WORKSPACE));

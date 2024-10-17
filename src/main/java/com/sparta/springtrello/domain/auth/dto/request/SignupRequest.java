@@ -15,4 +15,5 @@ public class SignupRequest {
     @NotBlank @Email private String email;
     @NotBlank private String password;
     @NotBlank private String userRole;
+    private String slackId;
 }

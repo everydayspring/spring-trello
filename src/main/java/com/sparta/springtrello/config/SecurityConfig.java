@@ -51,8 +51,7 @@ public class SecurityConfig {
                                         .requestMatchers("/test")
                                         .hasAuthority(Authority.ADMIN)
                                         .anyRequest()
-                                        .authenticated() // 그 외의 API는 JWT가 있어야해요!
-                        )
+                                        .authenticated())
                 .build();
     }
 }

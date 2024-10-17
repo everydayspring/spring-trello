@@ -59,7 +59,7 @@ public class WorkspaceService {
     }
 
     @Transactional
-    public void addMember(AuthUser authUser, Long id, String email, WorkspaceUserRole role) {
+    public User addMember(AuthUser authUser, Long id, String email, WorkspaceUserRole role) {
 
         // workspace 조회
         Workspace workspace =
@@ -95,6 +95,8 @@ public class WorkspaceService {
         }
 
         userWorkspaceRepository.save(new UserWorkspace(addUser.getId(), workspace.getId(), role));
+
+        return addUser;
     }
 
     public List<Workspace> getWorkspaces(Long userId) {

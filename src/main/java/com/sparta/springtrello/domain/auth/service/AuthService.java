@@ -41,7 +41,12 @@ public class AuthService {
         String encodedPassword = passwordEncoder.encode(signupRequest.getPassword());
         UserRole userRole = UserRole.of(signupRequest.getUserRole());
 
-        User newUser = new User(signupRequest.getEmail(), encodedPassword, userRole);
+        User newUser =
+                new User(
+                        signupRequest.getEmail(),
+                        encodedPassword,
+                        userRole,
+                        signupRequest.getSlackId());
         User savedUser = userRepository.save(newUser);
 
         String bearerToken =
