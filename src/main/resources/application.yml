@@ -37,6 +37,8 @@ slack:
 
 jwt.secret.key: ${secret_key}
 
+debug: true
+
 cloud:
   aws:
     credentials:
@@ -44,3 +46,4 @@ cloud:
       secret-key: ${aws_secret_key}
     region:
       static: ${aws_region}
+

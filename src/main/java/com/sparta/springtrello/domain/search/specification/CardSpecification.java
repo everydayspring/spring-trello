@@ -13,7 +13,7 @@ public class CardSpecification {
         return (Root<Card> root, CriteriaQuery<?> query, CriteriaBuilder criteriaBuilder) -> {
             Predicate predicate = criteriaBuilder.conjunction();
 
-            // 카드 이름 검색
+            // 카드 검색
             if (searchDto.getName() != null && !searchDto.getName().isEmpty()) {
                 predicate =
                         criteriaBuilder.and(
@@ -30,6 +30,7 @@ public class CardSpecification {
                                         root.get("description"),
                                         "%" + searchDto.getDescription() + "%"));
             }
+
             if (searchDto.getDueDate() != null) {
                 predicate =
                         criteriaBuilder.and(
@@ -51,6 +52,7 @@ public class CardSpecification {
                                 predicate,
                                 criteriaBuilder.in(root.get("managerId")).value(userSubquery));
             }
+
             if (searchDto.getBoardId() != null) {
                 predicate =
                         criteriaBuilder.and(
