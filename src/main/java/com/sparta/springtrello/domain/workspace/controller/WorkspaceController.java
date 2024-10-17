@@ -55,7 +55,9 @@ public class WorkspaceController {
     @GetMapping
     public ResponseEntity<ApiResponse<?>> getWorkspaces(
             @AuthenticationPrincipal AuthUser authUser) {
+
         List<Workspace> workspaces = workspaceService.getWorkspaces(authUser.getId());
+
         return ResponseEntity.ok(ApiResponse.success(workspaces));
     }
 
@@ -89,6 +91,7 @@ public class WorkspaceController {
     @DeleteMapping("{id}")
     public ResponseEntity<ApiResponse<?>> delete(
             @AuthenticationPrincipal AuthUser authUser, @PathVariable Long id) {
+
         workspaceService.delete(authUser, id);
 
         return ResponseEntity.ok(ApiResponse.successWithNoContent());
