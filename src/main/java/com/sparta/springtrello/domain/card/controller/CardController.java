@@ -1,12 +1,19 @@
 package com.sparta.springtrello.domain.card.controller;
 
+import java.io.IOException;
 import java.util.List;
+
+import jakarta.validation.Valid;
 
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.multipart.MultipartFile;
 
-import com.sparta.springtrello.domain.card.dto.CardRequestDto;
+import com.sparta.springtrello.config.ApiResponse;
+import com.sparta.springtrello.domain.card.dto.CreateCardDto;
+import com.sparta.springtrello.domain.card.dto.GetCardDto;
+import com.sparta.springtrello.domain.card.dto.GetCardsDto;
 import com.sparta.springtrello.domain.card.entity.Card;
 import com.sparta.springtrello.domain.card.service.CardService;
 import com.sparta.springtrello.domain.common.dto.AuthUser;
@@ -22,39 +29,60 @@ public class CardController {
 
     // 생성
     @PostMapping
-    public ResponseEntity<Card> createCard(
-            @RequestBody CardRequestDto cardRequestDto,
-            @AuthenticationPrincipal AuthUser authUser) {
-        Card newCard = cardService.createCard(cardRequestDto, authUser);
-        Card createdCard =
-                cardService.addCard(cardRequestDto.getListId(), cardRequestDto, authUser);
+    public ResponseEntity<ApiResponse<?>> createCard(
+            @RequestPart("data") CreateCardDto.Request request,
+            @RequestPart("file") MultipartFile file,
+            @AuthenticationPrincipal AuthUser authUser)
+            throws IOException {
 
-        return ResponseEntity.ok(createdCard);
+        Card card = cardService.createCard(authUser, request, file);
+
+        return ResponseEntity.ok(ApiResponse.success(new CreateCardDto.Response(card)));
     }
 
-    // 조회
-    @GetMapping("/{listId}")
-    public ResponseEntity<List<Card>> getCardsByListId(
-            @PathVariable Long listId, @AuthenticationPrincipal AuthUser authUser) {
-        List<Card> cards = cardService.findAllByListId(listId, authUser);
-        return ResponseEntity.ok(cards);
+    // 다건 조회
+    @GetMapping
+    public ResponseEntity<ApiResponse<?>> getCards(
+            @Valid @RequestBody GetCardsDto.Request request,
+            @AuthenticationPrincipal AuthUser authUser) {
+
+        List<Card> cards = cardService.getCards(request.getListId(), authUser);
+
+        List<GetCardsDto.Response> cardResponses =
+                cards.stream().map(GetCardsDto.Response::new).toList();
+
+        return ResponseEntity.ok(ApiResponse.success(cardResponses));
+    }
+
+    // 단건 조회
+    @GetMapping("/{id}")
+    public ResponseEntity<ApiResponse<?>> getCard(
+            @PathVariable Long id, @AuthenticationPrincipal AuthUser authUser) {
+
+        GetCardDto.Response response = cardService.getCard(id, authUser);
+
+        return ResponseEntity.ok(ApiResponse.success(response));
     }
 
     // 수정
     @PutMapping("/{id}")
-    public ResponseEntity<Card> updateCard(
+    public ResponseEntity<ApiResponse<?>> updateCard(
             @PathVariable Long id,
-            @RequestBody CardRequestDto cardRequestDto,
-            @AuthenticationPrincipal AuthUser authUser) {
-        Card updatedCard = cardService.updateCard(id, authUser, cardRequestDto);
-        return ResponseEntity.ok(updatedCard);
+            @RequestPart("data") CreateCardDto.Request request,
+            @RequestPart("file") MultipartFile file,
+            @AuthenticationPrincipal AuthUser authUser)
+            throws IOException {
+
+        Card card = cardService.updateCard(id, authUser, request, file);
+
+        return ResponseEntity.ok(ApiResponse.success(new CreateCardDto.Response(card)));
     }
 
     // 삭제
     @DeleteMapping("/{id}")
-    public ResponseEntity<Void> deleteCard(
+    public ResponseEntity<ApiResponse<?>> deleteCard(
             @PathVariable Long id, @AuthenticationPrincipal AuthUser authUser) {
         cardService.deleteCard(id, authUser);
-        return ResponseEntity.noContent().build();
+        return ResponseEntity.ok(ApiResponse.successWithNoContent());
     }
 }
