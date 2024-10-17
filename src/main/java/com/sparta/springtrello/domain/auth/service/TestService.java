@@ -39,7 +39,10 @@ public class TestService {
     public void test() {
         userRepository.save(
                 new User(
-                        "user1@mail.com", passwordEncoder.encode("abc123?!"), UserRole.ROLE_ADMIN));
+                        "user1@mail.com",
+                        passwordEncoder.encode("abc123?!"),
+                        UserRole.ROLE_ADMIN,
+                        "D07RU29MDRA"));
         userRepository.save(
                 new User(
                         "user2@mail.com", passwordEncoder.encode("abc123?!"), UserRole.ROLE_ADMIN));

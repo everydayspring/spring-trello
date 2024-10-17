@@ -45,9 +45,10 @@ public class JwtSecurityFilter extends OncePerRequestFilter {
                 Long userId = Long.valueOf(claims.getSubject());
                 String email = claims.get("email", String.class);
                 UserRole userRole = UserRole.of(claims.get("userRole", String.class));
+                String slackId = claims.get("slackId", String.class);
 
                 if (SecurityContextHolder.getContext().getAuthentication() == null) {
-                    AuthUser authUser = new AuthUser(userId, email, userRole);
+                    AuthUser authUser = new AuthUser(userId, email, userRole, slackId);
 
                     JwtAuthenticationToken authenticationToken =
                             new JwtAuthenticationToken(authUser);
