@@ -8,11 +8,9 @@ import com.sparta.springtrello.domain.common.entity.Timestamped;
 
 import lombok.Getter;
 import lombok.NoArgsConstructor;
-import lombok.Setter;
 
 @Getter
 @Entity
-@Setter
 @NoArgsConstructor
 @Table(name = "cards")
 public class Card extends Timestamped {
@@ -28,7 +26,29 @@ public class Card extends Timestamped {
     private Long managerId;
     private Long listId;
 
+    private String fileName;
+    private String fileUrl;
+
     public Card(
+            String name,
+            Long sequence,
+            String description,
+            LocalDateTime dueDate,
+            Long managerId,
+            Long listId,
+            String fileName,
+            String fileUrl) {
+        this.name = name;
+        this.sequence = sequence;
+        this.description = description;
+        this.dueDate = dueDate;
+        this.managerId = managerId;
+        this.listId = listId;
+        this.fileName = fileName;
+        this.fileUrl = fileUrl;
+    }
+
+    public void updateCard(
             String name,
             Long sequence,
             String description,
@@ -43,14 +63,12 @@ public class Card extends Timestamped {
         this.listId = listId;
     }
 
-    public void changeManager(Long managerId) {
-        this.managerId = managerId;
+    public void addFile(String fileName, String fileUrl) {
+        this.fileName = fileName;
+        this.fileUrl = fileUrl;
     }
 
-    public void updateCard(String name, String description, LocalDateTime dueDate, Long managerId) {
-        this.name = name;
-        this.description = description;
-        this.dueDate = dueDate;
-        this.managerId = managerId;
+    public void changeSequence(Long sequence) {
+        this.sequence = sequence;
     }
 }
