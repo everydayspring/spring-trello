@@ -84,10 +84,10 @@ public class CommentService {
         Comment comment =
                 commentRepository
                         .findById(id)
-                        .orElseThrow(() -> new EntityNotFoundException("댓글을 찾을 수 없습니다."));
+                        .orElseThrow(() -> new InvalidRequestException("댓글을 찾을 수 없습니다."));
 
         if (!comment.getUserId().equals(user.getId())) {
-            throw new AccessDeniedException("댓글을 수정할 권한이 없습니다.");
+            throw new InvalidRequestException("댓글을 수정할 권한이 없습니다.");
         }
 
         comment.update(request.getContent(), request.getEmoji());
@@ -103,10 +103,10 @@ public class CommentService {
         Comment comment =
                 commentRepository
                         .findById(id)
-                        .orElseThrow(() -> new EntityNotFoundException("댓글을 찾을 수 없습니다."));
+                        .orElseThrow(() -> new InvalidRequestException("댓글을 찾을 수 없습니다."));
 
         if (!comment.getUserId().equals(user.getId())) {
-            throw new AccessDeniedException("댓글을 삭제할 권한이 없습니다.");
+            throw new InvalidRequestException("댓글을 삭제할 권한이 없습니다.");
         }
 
         commentRepository.delete(comment);
