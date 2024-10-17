@@ -77,10 +77,11 @@ public class TestService {
         //        cardRepository.save(new Card("card4", 4L, "description4", LocalDateTime.now(), 4L,
         // 2L));
 
-        //        commentRepository.save(new Comment("emoji1", "content", 1L, 1L, 1L));
-        //        commentRepository.save(new Comment("emoji2", "content", 2L, 1L, 1L));
-        //        commentRepository.save(new Comment("emoji3", "content", 3L, 4L, 1L));
-        //        commentRepository.save(new Comment("emoji4", "content", 4L, 5L, 1L));
+
+        commentRepository.save(new Comment("emoji1", "content", 1L, 1L));
+        commentRepository.save(new Comment("emoji2", "content", 2L, 1L));
+        commentRepository.save(new Comment("emoji3", "content", 3L, 4L));
+        commentRepository.save(new Comment("emoji4", "content", 4L, 5L));
 
         userWorkspaceRepository.save(new UserWorkspace(1L, 1L, WorkspaceUserRole.WORKSPACE));
         userWorkspaceRepository.save(new UserWorkspace(1L, 2L, WorkspaceUserRole.WORKSPACE));
