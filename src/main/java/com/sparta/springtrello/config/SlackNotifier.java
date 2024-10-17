@@ -15,9 +15,13 @@ public class SlackNotifier {
 
     private final RestTemplate restTemplate = new RestTemplate();
 
-    public void sendSlackNotification(String message) {
+    // 제목과 메시지를 함께 전송하도록 메서드 수정
+    public void sendSlackNotification(String title, String message) {
         Map<String, Object> payload = new HashMap<>();
-        payload.put("text", message); // 메시지 내용
+        // 제목을 메시지의 첫 부분에 추가
+        String formattedMessage = "*" + title + "*\n" + message; // 제목은 굵은 글씨로
+
+        payload.put("text", formattedMessage); // 메시지 내용에 제목 포함
 
         try {
             restTemplate.postForEntity(slackWebhookUrl, payload, String.class);

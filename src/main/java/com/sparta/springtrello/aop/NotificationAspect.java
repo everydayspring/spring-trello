@@ -39,14 +39,15 @@ public class NotificationAspect {
         Object email = args[2]; // 추가할 멤버의 email
         Object role = args[3]; // WorkspaceUserRole
 
-        // 알림 메시지 생성
+        // 알림 제목과 메시지
+        String title = "Workspace Add User Event";
         String message =
                 String.format(
-                        "Workspace Add User Event \n\n - AuthUser = %s \n - Workspace ID = %s \n - Add User Email = %s \n - Role = %s",
+                        " - AuthUser = %s \n - Workspace ID = %s \n - Add User Email = %s \n - Role = %s",
                         authUser, workspaceId, email, role);
 
         // Slack 알림 전송
-        sendNotification(message);
+        sendNotification(title, message);
     }
 
     // saveComment 메서드가 성공적으로 반환된 후 실행
@@ -58,23 +59,24 @@ public class NotificationAspect {
         Object authUser = args[0]; // AuthUser 객체
         Object commentRequest = args[1]; // CommentRequest 객체
 
-        // 알림 메시지 생성
+        // 알림 제목과 메시지
+        String title = "New Comment Event";
         String message =
                 String.format(
-                        "New Comment Event \n\n - AuthUser = %s \n - Card ID = %s \n - Emoji = %s \n - Content = %s",
+                        " - AuthUser = %s \n - Card ID = %s \n - Emoji = %s \n - Content = %s",
                         authUser,
                         ((CommentRequest) commentRequest).getCardId(),
                         ((CommentRequest) commentRequest).getEmoji(),
                         ((CommentRequest) commentRequest).getContent());
 
         // Slack 알림 전송
-        sendNotification(message);
+        sendNotification(title, message);
     }
 
     // Slack 알림 전송을 위한 공통 메서드
-    private void sendNotification(String message) {
+    private void sendNotification(String title, String message) {
         try {
-            slackNotifier.sendSlackNotification(message);
+            slackNotifier.sendSlackNotification(title, message);
             log.info("Slack notification sent: {}", message);
         } catch (Exception e) {
             log.error("Failed to send Slack notification: {}", e.getMessage());
