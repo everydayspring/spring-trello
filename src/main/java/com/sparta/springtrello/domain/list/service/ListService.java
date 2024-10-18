@@ -5,15 +5,13 @@ import java.util.List;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import com.querydsl.jpa.impl.JPAQueryFactory;
 import com.sparta.springtrello.domain.board.entitiy.Board;
 import com.sparta.springtrello.domain.board.repository.BoardRepository;
-import com.sparta.springtrello.domain.card.entity.QCard;
 import com.sparta.springtrello.domain.common.dto.AuthUser;
 import com.sparta.springtrello.domain.common.exception.InvalidRequestException;
 import com.sparta.springtrello.domain.list.dto.request.ListRequestDto;
 import com.sparta.springtrello.domain.list.entity.BoardList;
-import com.sparta.springtrello.domain.list.entity.QBoardList;
+import com.sparta.springtrello.domain.list.repository.ListQueryRepository;
 import com.sparta.springtrello.domain.list.repository.ListRepository;
 import com.sparta.springtrello.domain.user.entity.UserWorkspace;
 import com.sparta.springtrello.domain.user.enums.WorkspaceUserRole;
@@ -29,7 +27,7 @@ public class ListService {
     private final ListRepository listRepository;
     private final BoardRepository boardRepository;
     private final UserWorkspaceRepository userWorkspaceRepository;
-    private final JPAQueryFactory queryFactory;
+    private final ListQueryRepository listQueryRepository;
 
     // 리스트 생성
     @Transactional
@@ -78,9 +76,8 @@ public class ListService {
             throw new InvalidRequestException("읽기 전용 권한을 가진 유저는 리스트를 수정할 수 없습니다.");
         }
 
-        QBoardList boardList = QBoardList.boardList;
         // 보드에 속한 모든 리스트 조회
-        return queryFactory.selectFrom(boardList).where(boardList.boardId.eq(boardId)).fetch();
+        return listQueryRepository.findListsByBoardId(boardId);
     }
 
     // 리스트 수정
@@ -116,7 +113,6 @@ public class ListService {
     @Transactional
     public void deleteList(Long listId, AuthUser authUser) {
 
-        // 리스트 조회
         BoardList boardList =
                 listRepository
                         .findById(listId)
@@ -138,25 +134,11 @@ public class ListService {
             throw new InvalidRequestException("읽기 전용 권한을 가진 유저는 리스트를 삭제할 수 없습니다.");
         }
 
-        QCard card = QCard.card;
-        queryFactory.delete(card).where(card.listId.eq(listId)).execute();
+        listQueryRepository.deleteListWithCards(listId);
 
-        listRepository.delete(boardList);
-
-        // 보드에 속한 남은 리스트들의 순서를 다시 설정
         List<BoardList> reorder =
-                queryFactory
-                        .selectFrom(QBoardList.boardList)
-                        .where(
-                                QBoardList.boardList
-                                        .boardId
-                                        .eq(boardList.getBoardId())
-                                        .and(
-                                                QBoardList.boardList.sequence.gt(
-                                                        boardList.getSequence())))
-                        // 리스트들만 조회
-                        .orderBy(QBoardList.boardList.sequence.asc()) // 기존 순서대로 정렬
-                        .fetch();
+                listQueryRepository.findListsReorder(
+                        boardList.getBoardId(), boardList.getSequence());
 
         // 순서를 다시 설정
         for (int i = 0; i < reorder.size(); i++) {
