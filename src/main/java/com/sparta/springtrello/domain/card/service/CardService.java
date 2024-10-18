@@ -3,6 +3,7 @@ package com.sparta.springtrello.domain.card.service;
 import java.io.IOException;
 import java.util.List;
 
+import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.multipart.MultipartFile;
@@ -41,8 +42,11 @@ public class CardService {
     private final UserWorkspaceRepository userWorkspaceRepository;
     private final CardLogRepository cardLogRepository;
     private final CommentRepository commentRepository;
-
     private final FileUploadService fileUploadService;
+
+    private final RedisTemplate<String, Object> redisTemplate;
+    private static final String CARD_VIEW_COUNT_KEY_PREFIX = "card:viewCount:";
+    private static final String CARD_VIEW_USERS_KEY_PREFIX = "card:viewUsers:";
 
     // 카드 생성
     @Transactional
@@ -275,10 +279,21 @@ public class CardService {
             throw new InvalidRequestException("워크스페이스에 대한 권한이 없습니다.");
         }
 
-        List<CardLog> cardLogs = cardLogRepository.findByCardId(id);
+        incrementCardViewCount(id, authUser.getId());
 
+        List<CardLog> cardLogs = cardLogRepository.findByCardId(id);
         List<Comment> comments = commentRepository.findByCardId(id);
 
         return new GetCardDto.Response(card, cardLogs, comments);
+    }
+
+    public void incrementCardViewCount(Long cardId, Long userId) {
+        String cardViewCountKey = CARD_VIEW_COUNT_KEY_PREFIX + cardId;
+        String cardViewUsersKey = CARD_VIEW_USERS_KEY_PREFIX + cardId;
+
+        if (!redisTemplate.opsForSet().isMember(cardViewUsersKey, userId)) {
+            redisTemplate.opsForSet().add(cardViewUsersKey, userId);
+            redisTemplate.opsForValue().increment(cardViewCountKey, 1);
+        }
     }
 }

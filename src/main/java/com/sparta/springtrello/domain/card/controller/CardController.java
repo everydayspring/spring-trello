@@ -59,6 +59,7 @@ public class CardController {
     public ResponseEntity<ApiResponse<?>> getCard(
             @PathVariable Long id, @AuthenticationPrincipal AuthUser authUser) {
 
+        cardService.incrementCardViewCount(id, authUser.getId());
         GetCardDto.Response response = cardService.getCard(id, authUser);
 
         return ResponseEntity.ok(ApiResponse.success(response));
