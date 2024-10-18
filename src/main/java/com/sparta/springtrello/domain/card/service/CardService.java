@@ -173,13 +173,8 @@ public class CardService {
                             .findById(newList.getBoardId())
                             .orElseThrow(() -> new InvalidRequestException("Board not found"));
 
-            UserWorkspace newWorkspace =
-                    userWorkspaceRepository
-                            .findByUserIdAndWorkspaceId(authUser.getId(), newBoard.getWorkspaceId())
-                            .orElseThrow(() -> new InvalidRequestException("워크스페이스에 대한 권한이 없습니다."));
-
-            if (newWorkspace.getWorkspaceUserRole() == WorkspaceUserRole.READ_ONLY) {
-                throw new InvalidRequestException("READ ONLY 유저는 카드를 수정할 수 없습니다.");
+            if (!board.getWorkspaceId().equals(newBoard.getWorkspaceId())) {
+                throw new InvalidRequestException("다른 워크스페이스로는 변경할 수 없습니다");
             }
 
             sequence = cardRepository.countByListId(newList.getId());

@@ -82,7 +82,9 @@ public class CardController {
     @DeleteMapping("/{id}")
     public ResponseEntity<ApiResponse<?>> deleteCard(
             @PathVariable Long id, @AuthenticationPrincipal AuthUser authUser) {
+
         cardService.deleteCard(id, authUser);
+
         return ResponseEntity.ok(ApiResponse.successWithNoContent());
     }
 }

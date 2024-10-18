@@ -2,7 +2,6 @@ package com.sparta.springtrello.domain.list.service;
 
 import java.util.List;
 
-import org.springframework.security.access.AccessDeniedException;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -37,15 +36,15 @@ public class ListService {
         Board board =
                 boardRepository
                         .findById(listRequestDto.getBoardId())
-                        .orElseThrow(() -> new IllegalArgumentException("해당 보드를 찾을 수 없습니다."));
+                        .orElseThrow(() -> new InvalidRequestException("해당 보드를 찾을 수 없습니다."));
         UserWorkspace userWorkspace =
                 userWorkspaceRepository
                         .findByUserIdAndWorkspaceId(authUser.getId(), board.getWorkspaceId())
                         .orElseThrow(
-                                () -> new IllegalArgumentException("해당 워크스페이스에 대한 접근 권한이 없습니다."));
+                                () -> new InvalidRequestException("해당 워크스페이스에 대한 접근 권한이 없습니다."));
 
         if (userWorkspace.getWorkspaceUserRole() == WorkspaceUserRole.READ_ONLY) {
-            throw new AccessDeniedException("읽기 전용 권한을 가진 유저는 리스트를 생성할 수 없습니다.");
+            throw new InvalidRequestException("읽기 전용 권한을 가진 유저는 리스트를 생성할 수 없습니다.");
         }
 
         Long currentListCount = listRepository.countByBoardId(board.getId());
@@ -66,15 +65,15 @@ public class ListService {
         Board board =
                 boardRepository
                         .findById(boardId)
-                        .orElseThrow(() -> new IllegalArgumentException("해당 보드를 찾을 수 없습니다."));
+                        .orElseThrow(() -> new InvalidRequestException("해당 보드를 찾을 수 없습니다."));
         UserWorkspace userWorkspace =
                 userWorkspaceRepository
                         .findByUserIdAndWorkspaceId(authUser.getId(), board.getWorkspaceId())
                         .orElseThrow(
-                                () -> new IllegalArgumentException("해당 워크스페이스에 대한 접근 권한이 없습니다."));
+                                () -> new InvalidRequestException("해당 워크스페이스에 대한 접근 권한이 없습니다."));
 
         if (userWorkspace.getWorkspaceUserRole() == WorkspaceUserRole.READ_ONLY) {
-            throw new AccessDeniedException("읽기 전용 권한을 가진 유저는 리스트를 수정할 수 없습니다.");
+            throw new InvalidRequestException("읽기 전용 권한을 가진 유저는 리스트를 수정할 수 없습니다.");
         }
 
         // 보드에 속한 모든 리스트 조회
@@ -87,21 +86,21 @@ public class ListService {
         BoardList boardList =
                 listRepository
                         .findById(listId)
-                        .orElseThrow(() -> new IllegalArgumentException("해당 리스트를 찾을 수 없습니다."));
+                        .orElseThrow(() -> new InvalidRequestException("해당 리스트를 찾을 수 없습니다."));
 
         Board board =
                 boardRepository
                         .findById(boardList.getBoardId())
-                        .orElseThrow(() -> new IllegalArgumentException("해당 보드를 찾을 수 없습니다."));
+                        .orElseThrow(() -> new InvalidRequestException("해당 보드를 찾을 수 없습니다."));
 
         UserWorkspace userWorkspace =
                 userWorkspaceRepository
                         .findByUserIdAndWorkspaceId(authUser.getId(), board.getWorkspaceId())
                         .orElseThrow(
-                                () -> new IllegalArgumentException("해당 워크스페이스에 대한 접근 권한이 없습니다."));
+                                () -> new InvalidRequestException("해당 워크스페이스에 대한 접근 권한이 없습니다."));
 
         if (userWorkspace.getWorkspaceUserRole() == WorkspaceUserRole.READ_ONLY) {
-            throw new AccessDeniedException("읽기 전용 권한을 가진 유저는 리스트를 수정할 수 없습니다.");
+            throw new InvalidRequestException("읽기 전용 권한을 가진 유저는 리스트를 수정할 수 없습니다.");
         }
 
         // 리스트 정보 업데이트(보드 아이디는 변경 불가)
@@ -117,22 +116,22 @@ public class ListService {
         BoardList boardList =
                 listRepository
                         .findById(listId)
-                        .orElseThrow(() -> new IllegalArgumentException("해당 리스트를 찾을 수 없습니다."));
+                        .orElseThrow(() -> new InvalidRequestException("해당 리스트를 찾을 수 없습니다."));
 
         Board board =
                 boardRepository
                         .findById(boardList.getBoardId())
                         .orElseThrow(
-                                () -> new IllegalArgumentException("해당 리스트가 속한 보드를 찾을 수 없습니다."));
+                                () -> new InvalidRequestException("해당 리스트가 속한 보드를 찾을 수 없습니다."));
 
         UserWorkspace userWorkspace =
                 userWorkspaceRepository
                         .findByUserIdAndWorkspaceId(authUser.getId(), board.getWorkspaceId())
                         .orElseThrow(
-                                () -> new IllegalArgumentException("해당 워크스페이스에 대한 접근 권한이 없습니다."));
+                                () -> new InvalidRequestException("해당 워크스페이스에 대한 접근 권한이 없습니다."));
 
         if (userWorkspace.getWorkspaceUserRole() == WorkspaceUserRole.READ_ONLY) {
-            throw new AccessDeniedException("읽기 전용 권한을 가진 유저는 리스트를 삭제할 수 없습니다.");
+            throw new InvalidRequestException("읽기 전용 권한을 가진 유저는 리스트를 삭제할 수 없습니다.");
         }
 
         listQueryRepository.deleteListWithCards(listId);
@@ -155,12 +154,12 @@ public class ListService {
         BoardList list1 =
                 listRepository
                         .findById(list1Id)
-                        .orElseThrow(() -> new IllegalArgumentException("List 1을 찾을 수 없습니다."));
+                        .orElseThrow(() -> new InvalidRequestException("List 1을 찾을 수 없습니다."));
 
         BoardList list2 =
                 listRepository
                         .findById(list2Id)
-                        .orElseThrow(() -> new IllegalArgumentException("List 2를 찾을 수 없습니다."));
+                        .orElseThrow(() -> new InvalidRequestException("List 2를 찾을 수 없습니다."));
 
         if (!list1.getBoardId().equals(list2.getBoardId())) {
             throw new InvalidRequestException("리스트는 같은 보드에 있어야 합니다.");

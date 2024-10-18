@@ -6,6 +6,8 @@ import java.util.UUID;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 
+import com.sparta.springtrello.domain.common.exception.InvalidRequestException;
+
 import software.amazon.awssdk.core.sync.RequestBody;
 import software.amazon.awssdk.services.s3.S3Client;
 import software.amazon.awssdk.services.s3.model.PutObjectRequest;
@@ -34,7 +36,7 @@ public class FileUploadService {
                     PutObjectRequest.builder().bucket(bucketName).key(fileName).build(),
                     RequestBody.fromInputStream(file.getInputStream(), file.getSize()));
         } catch (S3Exception e) {
-            throw new IllegalStateException("Failed to upload the file to S3", e);
+            throw new InvalidRequestException("Failed to upload the file to S3");
         }
 
         return fileName;
@@ -43,18 +45,18 @@ public class FileUploadService {
     // 파일 검증 로직
     private void validateFile(MultipartFile file) {
         if (file.isEmpty()) {
-            throw new IllegalArgumentException("파일이 비어 있습니다.");
+            throw new InvalidRequestException("파일이 비어 있습니다.");
         }
 
         // 파일 크기 제한 (5MB 이하)
         if (file.getSize() > 5 * 1024 * 1024) { // 5MB 제한
-            throw new IllegalArgumentException("파일 크기는 최대 5MB입니다.");
+            throw new InvalidRequestException("파일 크기는 최대 5MB입니다.");
         }
 
         // 지원되는 MIME 타입 목록
         String contentType = file.getContentType();
         if (!isSupportedContentType(contentType)) {
-            throw new IllegalArgumentException("지원되지 않는 파일 형식입니다.");
+            throw new InvalidRequestException("지원되지 않는 파일 형식입니다.");
         }
     }
 

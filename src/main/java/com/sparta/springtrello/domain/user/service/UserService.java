@@ -53,22 +53,18 @@ public class UserService {
     }
 
     @Transactional
-    public void deleteUser(AuthUser authUser, Long id, DeleteUserRequest deleteUserRequest) {
+    public void deleteUser(AuthUser authUser, DeleteUserRequest deleteUserRequest) {
         User user =
                 userRepository
-                        .findByEmail(authUser.getEmail())
-                        .orElseThrow(() -> new IllegalArgumentException("유저를 찾을 수 없습니다."));
-
-        if (!user.getId().equals(id)) {
-            throw new IllegalArgumentException("삭제 권한이 없습니다.");
-        }
+                        .findById(authUser.getId())
+                        .orElseThrow(() -> new InvalidRequestException("유저를 찾을 수 없습니다."));
 
         if (user.isDeleted()) {
-            throw new IllegalArgumentException("이미 탈퇴한 유저입니다.");
+            throw new InvalidRequestException("이미 탈퇴한 유저입니다.");
         }
 
         if (!passwordEncoder.matches(deleteUserRequest.getPassword(), user.getPassword())) {
-            throw new IllegalArgumentException("비밀번호가 일치하지 않습니다.");
+            throw new InvalidRequestException("비밀번호가 일치하지 않습니다.");
         }
 
         user.changeIsDeleted();

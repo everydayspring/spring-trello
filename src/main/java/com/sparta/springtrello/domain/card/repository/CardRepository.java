@@ -8,7 +8,8 @@ import org.springframework.data.jpa.repository.JpaSpecificationExecutor;
 import com.sparta.springtrello.domain.card.entity.Card;
 
 public interface CardRepository
-        extends JpaRepository<Card, Long>, JpaSpecificationExecutor<Card>, CardQueryRepository {
+        extends JpaRepository<Card, Long>, CardQueryRepository, JpaSpecificationExecutor<Card> {
+
     List<Card> findAllByListId(Long listId);
 
     long countByListId(Long listId);

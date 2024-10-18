@@ -57,7 +57,7 @@ public class CardSpecification {
                 predicate =
                         criteriaBuilder.and(
                                 predicate,
-                                criteriaBuilder.equal(root.get("listId"), searchDto.getBoardId()));
+                                criteriaBuilder.equal(root.get("boardId"), searchDto.getBoardId()));
             }
 
             return predicate;

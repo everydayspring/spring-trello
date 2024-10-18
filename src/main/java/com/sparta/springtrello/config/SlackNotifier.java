@@ -15,14 +15,19 @@ public class SlackNotifier {
 
     private final RestTemplate restTemplate = new RestTemplate();
 
-    public void sendSlackNotification(String message) {
+    public void sendSlackNotification(String title, String message) {
         Map<String, Object> payload = new HashMap<>();
-        payload.put("text", message); // 메시지 내용
+
+        String formattedMessage = "*" + title + "*\n" + message;
+
+        payload.put("text", formattedMessage);
+        payload.put("username", "Spring Trello Event");
+        payload.put("icon_emoji", ":smiley:");
 
         try {
             restTemplate.postForEntity(slackWebhookUrl, payload, String.class);
         } catch (Exception e) {
-            e.printStackTrace(); // 에러 처리
+            e.printStackTrace();
         }
     }
 }

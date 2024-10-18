@@ -53,11 +53,11 @@ public class BoardService {
         User user =
                 userRepository
                         .findById(authUser.getId())
-                        .orElseThrow(() -> new IllegalArgumentException("유저를 찾을 수 없습니다."));
+                        .orElseThrow(() -> new InvalidRequestException("유저를 찾을 수 없습니다."));
 
         // 사용자 권한 체크
         if (!UserRole.ROLE_ADMIN.equals(user.getUserRole())) {
-            throw new AuthException("읽기 전용 권한으로 보드를 생성할 수 없습니다.");
+            throw new InvalidRequestException("읽기 전용 권한으로 보드를 생성할 수 없습니다.");
         }
 
         // 보드 이름 체크
@@ -69,7 +69,7 @@ public class BoardService {
         Workspace workspace =
                 workspaceRepository
                         .findById(boardSaveRequestDto.getWorkspaceId())
-                        .orElseThrow(() -> new IllegalArgumentException("해당 워크스페이스가 존재하지 않습니다."));
+                        .orElseThrow(() -> new InvalidRequestException("해당 워크스페이스가 존재하지 않습니다."));
 
         // 보드 생성 및 저장
         Board board =
@@ -118,7 +118,7 @@ public class BoardService {
         Board board =
                 boardRepository
                         .findById(id)
-                        .orElseThrow(() -> new IllegalArgumentException("보드를 찾을 수 없습니다."));
+                        .orElseThrow(() -> new InvalidRequestException("보드를 찾을 수 없습니다."));
 
         if (userWorkspaceRepository
                 .findByUserIdAndWorkspaceId(authUser.getId(), board.getWorkspaceId())
@@ -169,14 +169,13 @@ public class BoardService {
         User user =
                 userRepository
                         .findById(authUser.getId())
-                        .orElseThrow(() -> new IllegalArgumentException("사용자를 찾을 수 없습니다."));
+                        .orElseThrow(() -> new InvalidRequestException("사용자를 찾을 수 없습니다."));
 
         UserWorkspace userWorkspace =
                 userWorkspaceRepository
                         .findByUserIdAndWorkspaceId(
                                 user.getId(), boardUpdateRequestDto.getWorkspaceId())
-                        .orElseThrow(
-                                () -> new IllegalArgumentException("해당 워크스페이스에 소속되어 있지 않습니다."));
+                        .orElseThrow(() -> new InvalidRequestException("해당 워크스페이스에 소속되어 있지 않습니다."));
 
         if (userWorkspace.getWorkspaceUserRole() == WorkspaceUserRole.READ_ONLY) {
             throw new AuthException("해당 워크스페이스를 수정할 권한이 없습니다.");
@@ -185,7 +184,7 @@ public class BoardService {
         Board board =
                 boardRepository
                         .findById(id)
-                        .orElseThrow(() -> new IllegalArgumentException("보드를 찾을 수 없습니다."));
+                        .orElseThrow(() -> new InvalidRequestException("보드를 찾을 수 없습니다."));
 
         board.update(boardUpdateRequestDto.getName(), boardUpdateRequestDto.getBackground());
 
@@ -203,20 +202,20 @@ public class BoardService {
         User user =
                 userRepository
                         .findById(authUser.getId())
-                        .orElseThrow(() -> new IllegalArgumentException("사용자를 찾을 수 없습니다."));
+                        .orElseThrow(() -> new InvalidRequestException("사용자를 찾을 수 없습니다."));
 
         Board board =
                 boardRepository
                         .findById(id)
-                        .orElseThrow(() -> new IllegalArgumentException("보드를 찾을 수 없습니다."));
+                        .orElseThrow(() -> new InvalidRequestException("보드를 찾을 수 없습니다."));
 
         UserWorkspace userWorkspace =
                 userWorkspaceRepository
                         .findByUserIdAndWorkspaceId(user.getId(), board.getWorkspaceId())
-                        .orElseThrow(() -> new AuthException("해당 워크스페이스에 소속되어 있지 않습니다."));
+                        .orElseThrow(() -> new InvalidRequestException("해당 워크스페이스에 소속되어 있지 않습니다."));
 
         if (userWorkspace.getWorkspaceUserRole() == WorkspaceUserRole.READ_ONLY) {
-            throw new AuthException("해당 워크스페이스를 수정할 권한이 없습니다.");
+            throw new InvalidRequestException("해당 워크스페이스를 수정할 권한이 없습니다.");
         }
 
         boardRepository.delete(board);

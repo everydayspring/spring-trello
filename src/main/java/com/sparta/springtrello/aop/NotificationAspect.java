@@ -7,7 +7,11 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
 import com.sparta.springtrello.config.SlackNotifier;
+import com.sparta.springtrello.domain.card.entity.Card;
 import com.sparta.springtrello.domain.comment.dto.request.CommentRequest;
+import com.sparta.springtrello.domain.common.dto.AuthUser;
+import com.sparta.springtrello.domain.user.entity.User;
+import com.sparta.springtrello.domain.user.repository.UserRepository;
 
 import lombok.extern.slf4j.Slf4j;
 
@@ -16,68 +20,121 @@ import lombok.extern.slf4j.Slf4j;
 @Slf4j
 public class NotificationAspect {
 
+    @Autowired private UserRepository userRepository;
+
     @Autowired private SlackNotifier slackNotifier;
 
-    // addMember 메서드에 대한 포인트컷 설정
     @Pointcut(
             "execution(* com.sparta.springtrello.domain.workspace.service.WorkspaceService.addMember(..))")
     public void addMemberPointcut() {}
 
-    // 댓글 작성 메서드에 대한 포인트컷 설정
+    @Pointcut("execution(* com.sparta.springtrello.domain.card.service.CardService.createCard(..))")
+    public void createCardPointcut() {}
+
+    @Pointcut("execution(* com.sparta.springtrello.domain.card.service.CardService.updateCard(..))")
+    public void updateCardPointcut() {}
+
     @Pointcut(
             "execution(* com.sparta.springtrello.domain.comment.service.CommentService.saveComment(..))")
     public void saveCommentPointcut() {}
 
-    // addMember 메서드가 성공적으로 반환된 후 실행
     @AfterReturning(value = "addMemberPointcut()", returning = "result")
     public void logAddMemberSuccess(org.aspectj.lang.JoinPoint joinPoint, Object result) {
         Object[] args = joinPoint.getArgs();
 
-        // addMember의 인수인 AuthUser와 관련 정보를 가져옴
-        Object authUser = args[0]; // AuthUser 객체
-        Object workspaceId = args[1]; // workspaceId
-        Object email = args[2]; // 추가할 멤버의 email
-        Object role = args[3]; // WorkspaceUserRole
+        AuthUser authUser = (AuthUser) args[0];
+        Object workspaceId = args[1];
+        Object role = args[3];
 
-        // 알림 메시지 생성
+        String title = "Workspace Add User Event";
+
+        User user = (User) result;
+        String userTag = "<@" + user.getSlackId() + ">";
+
+        String authTag = "<@" + authUser.getSlackId() + ">";
+
         String message =
                 String.format(
-                        "Workspace Add User Event \n\n - AuthUser = %s \n - Workspace ID = %s \n - Add User Email = %s \n - Role = %s",
-                        authUser, workspaceId, email, role);
+                        "- Workspace ID : %s \n- Role : %s \n- 추가한 사용자 : %s \n- 추가된 사용자 : %s",
+                        workspaceId, role, authTag, userTag);
 
-        // Slack 알림 전송
-        sendNotification(message);
+        sendNotification(title, message);
     }
 
-    // saveComment 메서드가 성공적으로 반환된 후 실행
-    @AfterReturning(value = "saveCommentPointcut()", returning = "result")
-    public void logCommentSuccess(org.aspectj.lang.JoinPoint joinPoint, Object result) {
+    @AfterReturning(value = "createCardPointcut()", returning = "result")
+    public void logCreateCardSuccess(Object result) {
+
+        Card card = (Card) result;
+
+        User user = getUser(card.getManagerId());
+        String userTag = "<@" + user.getSlackId() + ">";
+
+        String title = "New Card Created Event";
+        String message =
+                String.format(
+                        "- Card Name : %s \n- Card Description : %s \n- List ID : %s \n- DueDate : %s \n- 담당자 : %s",
+                        card.getName(),
+                        card.getDescription(),
+                        card.getListId(),
+                        card.getDueDate(),
+                        userTag);
+
+        sendNotification(title, message);
+    }
+
+    @AfterReturning(value = "updateCardPointcut()", returning = "result")
+    public void logCardUpdateSuccess(Object result) {
+        Card card = (Card) result;
+
+        User user = getUser(card.getManagerId());
+        String userTag = "<@" + user.getSlackId() + ">";
+
+        String title = "Card Updated Event";
+        String message =
+                String.format(
+                        "- Card Name : %s \n- Card Description : %s \n- List ID : %s \n- DueDate : %s \n- 담당자 : %s",
+                        card.getName(),
+                        card.getDescription(),
+                        card.getListId(),
+                        card.getDueDate(),
+                        userTag);
+
+        sendNotification(title, message);
+    }
+
+    @AfterReturning(value = "saveCommentPointcut()")
+    public void logCommentSuccess(org.aspectj.lang.JoinPoint joinPoint) {
         Object[] args = joinPoint.getArgs();
 
-        // saveComment의 인수인 AuthUser와 관련 정보를 가져옴
-        Object authUser = args[0]; // AuthUser 객체
-        Object commentRequest = args[1]; // CommentRequest 객체
+        AuthUser authUser = (AuthUser) args[0];
+        Object commentRequest = args[1];
 
-        // 알림 메시지 생성
+        String authTag = "<@" + authUser.getSlackId() + ">";
+
+        String title = "New Comment Event";
         String message =
                 String.format(
-                        "New Comment Event \n\n - AuthUser = %s \n - Card ID = %s \n - Emoji = %s \n - Content = %s",
-                        authUser,
+                        "- Card ID : %s \n- Emoji : %s \n- Content : %s \n- 작성자 : %s",
                         ((CommentRequest) commentRequest).getCardId(),
                         ((CommentRequest) commentRequest).getEmoji(),
-                        ((CommentRequest) commentRequest).getContent());
+                        ((CommentRequest) commentRequest).getContent(),
+                        authTag);
 
-        // Slack 알림 전송
-        sendNotification(message);
+        sendNotification(title, message);
     }
 
-    // Slack 알림 전송을 위한 공통 메서드
-    private void sendNotification(String message) {
+    private void sendNotification(String title, String message) {
         try {
-            slackNotifier.sendSlackNotification(message);
+            slackNotifier.sendSlackNotification(title, message);
             log.info("Slack notification sent: {}", message);
         } catch (Exception e) {
             log.error("Failed to send Slack notification: {}", e.getMessage());
         }
+    }
+
+    private User getUser(Long managerId) {
+        User user = userRepository.findById(managerId).orElse(null);
+
+        return user;
     }
 }
