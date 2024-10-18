@@ -3,9 +3,10 @@ package com.sparta.springtrello.domain.common.service;
 import java.io.IOException;
 import java.util.UUID;
 
-import com.sparta.springtrello.domain.common.exception.InvalidRequestException;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
+
+import com.sparta.springtrello.domain.common.exception.InvalidRequestException;
 
 import software.amazon.awssdk.core.sync.RequestBody;
 import software.amazon.awssdk.services.s3.S3Client;
