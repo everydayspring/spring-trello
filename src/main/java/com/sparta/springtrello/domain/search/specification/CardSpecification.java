@@ -5,6 +5,7 @@ import jakarta.persistence.criteria.*;
 import org.springframework.data.jpa.domain.Specification;
 
 import com.sparta.springtrello.domain.card.entity.Card;
+import com.sparta.springtrello.domain.list.entity.BoardList;
 import com.sparta.springtrello.domain.search.dto.CardSearchRequestDto;
 import com.sparta.springtrello.domain.user.entity.User;
 
@@ -54,10 +55,19 @@ public class CardSpecification {
             }
 
             if (searchDto.getBoardId() != null) {
+                // listId로 lists 테이블을 조인한 다음 boardId를 검색
+                Subquery<Long> listSubquery = query.subquery(Long.class);
+                Root<BoardList> listRoot = listSubquery.from(BoardList.class);
+                listSubquery
+                        .select(listRoot.get("id"))
+                        .where(
+                                criteriaBuilder.equal(
+                                        listRoot.get("boardId"), searchDto.getBoardId()));
+
                 predicate =
                         criteriaBuilder.and(
                                 predicate,
-                                criteriaBuilder.equal(root.get("boardId"), searchDto.getBoardId()));
+                                criteriaBuilder.in(root.get("listId")).value(listSubquery));
             }
 
             return predicate;
