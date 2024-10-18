@@ -144,3 +144,8 @@ Comment
 
 [추가기능] 
 - https://velog.io/@uara67/트렐로인덱싱하여속도측정하기
+  인덱싱 속도 비교
+- https://everyday-spring.com/623 
+Spring Boot AOP사용하여 Slack 사용자 멘션하기
+- https://everyday-spring.com/622
+SpringBoot에서 첨부파일 처리하기 AWS S3
